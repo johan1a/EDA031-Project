@@ -9,7 +9,7 @@ class Database{
 public:
 
 	virtual std::vector<std::pair<int, std::string> >& listNewsGroups() const;
-	virtual std::string& createNewsGroup(const std::string& ngName);
+	virtual bool createNewsGroup(const std::string& ngName);
 	virtual std::string& deleteNewsGroup(const std::string& ngName);
 	virtual std::string& listArticlesFor(const std::string& ngName);
 	virtual std::string& readArticle(const std::string& articleName, const std::string& ngName);

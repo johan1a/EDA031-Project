@@ -30,11 +30,11 @@ public:
 		return newsGroups;
 	}
 
-	virtual string& createNewsGroup(const string& ngName){
+	virtual bool createNewsGroup(const string& ngName){
 		string s("");
-		//if(database.){
-		//	
-		//}
+		if(database.){
+			
+		}
 
 		return s;
 	}
@@ -43,7 +43,8 @@ public:
 		string s("");
 		return s;
 	}
-
+	
+	// vector<pair<int, string> > listArticlesFor(int i) kastar exception om newsgroupen inte finns
 	virtual string& listArticlesFor(const string& ngName){
 		string s("");
 		return s;
@@ -66,6 +67,23 @@ public:
 
 private:
 	map<string, map<string, string> > database;
+	bool containsNewsGroup(const string& ngName){
+		iter_type it = database.find(ngName);
+		return (it != database.end()));	
+	}
+
+	bool containsArticle(const string& articleName){
+		for(iter_type it = database.begin(); it != database.end(); ++it){
+			auto iter = find_if(it->second.begin(), it->second.end(), 
+								[](const string& name){return (name == articleName)});
+
+			if(iter != iter.end()){
+				return true;
+			}
+		}
+		return false;
+	}
+
 };
 
 

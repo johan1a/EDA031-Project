@@ -18,7 +18,7 @@ public:
 		return v;
 	}
 
-	virtual string& createNewsGroup(const string& ngName){
+	virtual bool createNewsGroup(const string& ngName){
 		string s("");
 		return s;
 	}
