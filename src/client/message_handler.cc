@@ -1,7 +1,11 @@
-#include <string>
 #include <iostream>
+#include <string>
+#include "message_handler.h"
+#include "../common/connection.h"
+#include "../common/connection_closed_exception.h"
+#include "../common/protocol.h"
 
-
+using namespace std;
 
 /**
  * Create a message handler.
@@ -9,16 +13,8 @@
  * @param conn
  *            The connection to use messages
  */
-MessageHandler::MessageHandler(Connection& conn) {
+MessageHandler::MessageHandler(const Connection& conn) {
 	this->conn = conn;
-}
-
-private void sendByte(int code) throws ConnectionClosedException {
-	try {
-		conn.write((char) code);
-	} catch (java.io.IOException e) {
-//		throw new ConnectionClosedException();
-	}
 }
 
 /**
@@ -29,7 +25,7 @@ private void sendByte(int code) throws ConnectionClosedException {
  * @throws ConnectionClosedException
  *             If the server died
  */
-void MessageHandler::sendCode(int code) throws ConnectionClosedException {
+void MessageHandler::sendCode(int code) {
 	sendByte(code);
 }
 
@@ -41,7 +37,7 @@ void MessageHandler::sendCode(int code) throws ConnectionClosedException {
  * @throws ConnectionClosedException
  *             If the server died
  */
-void MessageHandler::sendInt(int value) throws ConnectionClosedException {
+void MessageHandler::sendInt(int value) {
 	sendByte((value >> 24) & 0xFF);
 	sendByte((value >> 16) & 0xFF);
 	sendByte((value >> 8) & 0xFF);
@@ -56,8 +52,8 @@ void MessageHandler::sendInt(int value) throws ConnectionClosedException {
  * @throws ConnectionClosedException
  *             If the server died
  */
-void MessageHandler::sendIntParameter(int param) throws ConnectionClosedException {
-	sendCode(Protocol.PAR_NUM);
+void MessageHandler::sendIntParameter(int param) {
+	sendCode(Protocol::PAR_NUM);
 	sendInt(param);
 }
 
@@ -69,20 +65,12 @@ void MessageHandler::sendIntParameter(int param) throws ConnectionClosedExceptio
  * @throws ConnectionClosedException
  *             If the server died
  */
-void MessageHandler::sendStringParameter(String param) throws ConnectionClosedException {
-	sendCode(Protocol.PAR_STRING);
+void MessageHandler::sendStringParameter(const string& param) {
+	sendCode(Protocol::PAR_STRING);
 	sendInt(param.length());
-	for (int i = 0; i < param.length(); i++) {
-		sendByte(param.charAt(i));
+	for (unsigned int i = 0; i < param.length(); i++) {
+		sendByte(param[i]);
 	}
-}
-
-private int recvByte() throws ConnectionClosedException {
-	int code = conn.read();
-	if (code == Connection.CONNECTION_CLOSED) {
-//		throw new ConnectionClosedException();
-	}
-	return code;
 }
 
 /**
@@ -92,7 +80,7 @@ private int recvByte() throws ConnectionClosedException {
  * @throws ConnectionClosedException
  *             If the server died
  */
-int MessageHandler::recvCode() throws ConnectionClosedException {
+int MessageHandler::recvCode() {
 	int code = recvByte();
 	return code;
 }
@@ -104,7 +92,7 @@ int MessageHandler::recvCode() throws ConnectionClosedException {
  * @throws ConnectionClosedException
  *             If the server died
  */
-int MessageHandler::recvInt() throws ConnectionClosedException {
+int MessageHandler::recvInt() {
 	int b1 = recvByte();
 	int b2 = recvByte();
 	int b3 = recvByte();
@@ -120,10 +108,10 @@ int MessageHandler::recvInt() throws ConnectionClosedException {
  * @throws ConnectionClosedException
  *             If the server died
  */
-int MessageHandler::recvIntParameter() throws ConnectionClosedException {
+int MessageHandler::recvIntParameter() {
 	int code = recvCode();
-	if (code != Protocol.PAR_NUM) {
-//		throw new ProtocolViolationException("Receive numeric parameter", Protocol.PAR_NUM, code);
+	if (code != Protocol::PAR_NUM) {
+//		throw ProtocolViolationException("Receive numeric parameter", Protocol::PAR_NUM, code);
 	}
 	return recvInt();
 }
@@ -135,20 +123,38 @@ int MessageHandler::recvIntParameter() throws ConnectionClosedException {
  * @throws ConnectionClosedException
  *             If the server died
  */
-string MessageHandler::recvStringParameter() throws ConnectionClosedException {
-		int code = recvCode();
-		if (code != Protocol.PAR_STRING) {
-			//throw new ProtocolViolationException("Receive string parameter", Protocol.PAR_STRING, code);
-		}
-		int n = recvInt();
-		if (n < 0) {
-			//throw new ProtocolViolationException("Receive string parameter", "Number of characters < 0");
-		}
-		string result = "";
-		for (int i = 1; i <= n; i++) {
-			char ch = (char) conn.read();
-			result += ch;
-		}
-		return result;
+string MessageHandler::recvStringParameter() {
+	int code = recvCode();
+	if (code != Protocol::PAR_STRING) {
+		//throw ProtocolViolationException("Receive string parameter", Protocol::PAR_STRING, code);
+	}
+	int n = recvInt();
+	if (n < 0) {
+		//throw ProtocolViolationException("Receive string parameter", "Number of characters < 0");
+	}
+	string result = "";
+	for (int i = 1; i <= n; i++) {
+		char ch = conn.read();
+		result += ch;
+	}
+	return result;
+}
+
+int MessageHandler::recvByte() {
+	int code;
+	try{
+		code = conn.read();
+	} catch(...){
+		throw ConnectionClosedException();
+	}
+	return code;
+}
+
+void MessageHandler::sendByte(int code) {
+	try{
+		conn.write(static_cast<char>(code));
+	} catch(...){
+		throw ConnectionClosedException();
+	}
 }
 

@@ -1,5 +1,9 @@
-#include <string>
+#ifndef MESSAGE_HANDLER_H
+#define MESSAGE_HANDLER_H
+
 #include <iostream>
+#include <string>
+#include "../common/connection.h"
 
 /**
  * Message handler is the low-level message handler for messages to/from the
@@ -25,7 +29,7 @@ public:
 	 * @throws ConnectionClosedException
 	 *             If the server died
 	 */
-	void sendCode(int code) throws ConnectionClosedException;
+	void sendCode(int code);
 
 	/**
 	 * Transmit an int value, according to the protocol.
@@ -35,7 +39,7 @@ public:
 	 * @throws ConnectionClosedException
 	 *             If the server died
 	 */
-	void sendInt(int value) throws ConnectionClosedException;
+	void sendInt(int value);
 	/**
 	 * Transmit an int parameter, according to the protocol.
 	 * 
@@ -44,7 +48,7 @@ public:
 	 * @throws ConnectionClosedException
 	 *             If the server died
 	 */
-	void sendIntParameter(int param) throws ConnectionClosedException;
+	void sendIntParameter(int param);
 
 	/**
 	 * Transmit a string parameter, according to the protocol.
@@ -54,7 +58,7 @@ public:
 	 * @throws ConnectionClosedException
 	 *             If the server died
 	 */
-	void sendStringParameter(string param) throws ConnectionClosedException;
+	void sendStringParameter(const std::string& param);
 
 	/**
 	 * Receive a command code or an error code from the server.
@@ -63,7 +67,7 @@ public:
 	 * @throws ConnectionClosedException
 	 *             If the server died
 	 */
-	int recvCode() throws ConnectionClosedException;
+	int recvCode();
 
 	/**
 	 * Receive an int value from the server.
@@ -72,7 +76,7 @@ public:
 	 * @throws ConnectionClosedException
 	 *             If the server died
 	 */
-	int recvInt() throws ConnectionClosedException;
+	int recvInt();
 
 	/**
 	 * Receive an int parameter from the server.
@@ -81,7 +85,7 @@ public:
 	 * @throws ConnectionClosedException
 	 *             If the server died
 	 */
-	int recvIntParameter() throws ConnectionClosedException;
+	int recvIntParameter();
 
 	/**
 	 * Receive a string parameter from the server.
@@ -90,10 +94,12 @@ public:
 	 * @throws ConnectionClosedException
 	 *             If the server died
 	 */
-	string recvStringParameter() throws ConnectionClosedException;
+	std::string recvStringParameter();
 
 private:
-	Connection* conn; // the connection
-	int recvByte() throws ConnectionClosedException;
-	void sendByte(int code) throws ConnectionClosedException;
+	Connection conn; // the connection
+	int recvByte();
+	void sendByte(int code);
 };
+
+#endif
