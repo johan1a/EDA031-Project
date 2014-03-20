@@ -31,12 +31,11 @@ public:
 	}
 
 	virtual bool createNewsGroup(const string& ngName){
-		string s("");
-		if(database.){
-			
-		}
-
-		return s;
+//		if(!containsNewsGroup(ngName)){
+//			database[ngName] = "";
+//			return true;
+//		}
+		return false;
 	}
 
 	virtual string& deleteNewsGroup(const string& ngName){
@@ -66,22 +65,21 @@ public:
 	}
 
 private:
-	map<string, map<string, string> > database;
+	map<string, map<string, string> > database; //map<newsGroup, map<articleName, theText>>
+
 	bool containsNewsGroup(const string& ngName){
-		iter_type it = database.find(ngName);
-		return (it != database.end()));	
+//		iter_type it = database.find(ngName);
+//		return (it != database.end()));	
+		return true;
 	}
 
-	bool containsArticle(const string& articleName){
-		for(iter_type it = database.begin(); it != database.end(); ++it){
-			auto iter = find_if(it->second.begin(), it->second.end(), 
-								[](const string& name){return (name == articleName)});
-
-			if(iter != iter.end()){
-				return true;
-			}
-		}
-		return false;
+	bool containsArticle(const string& articleName, const string& ngName){
+//		if(containsNewsGroup(ngName)){
+//			iter_type it = database.find(ngName);
+//			iter_type articlePos = it->second.find(articleName);
+//			return (articlePos != it->second.end());
+//		}
+		return true;
 	}
 
 };
