@@ -1,5 +1,5 @@
-#include "userio.h"
-#include "clientcommandhandler.h"
+#include "user_io.h"
+#include "client_command_handler.h"
 
 using namespace std;
 
@@ -11,7 +11,7 @@ int main(){
 	string input, output;
 	while (isConnected){
 		input = userIO.getInput();
-		output = cmdHandler.execute(input);
+		output = input;
 		userIO.print(output);
 		isConnected = false;
 	}

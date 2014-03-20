@@ -17,12 +17,12 @@ LDFLAGS =   -g
 #LDFLAGS +=  -stdlib=libc++
 
 # Targets
-PROGS = clientmain
+PROGS = client_main
 
 all: $(PROGS)
 
 # Targets rely on implicit rules for compiling and linking
-clientmain: clientmain.o clientcommandhandler.o userio.o
+client_main: client_main.o client_command_handler.o user_io.o connection.o
 
 
 
