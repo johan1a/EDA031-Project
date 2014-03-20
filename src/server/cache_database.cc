@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 
+
 using namespace std;
 
 class CacheDatabase : public Database {
@@ -12,8 +13,8 @@ public:
 	
 	}
 
-	virtual vector<pair<int, string& ngName>>& listNewsGroups() const{
-		vector<pair<int, string& ngName>> v;
+	virtual vector<pair<int, string> >& listNewsGroups() const{
+		vector<pair<int, string> > v;
 		return v;
 	}
 
