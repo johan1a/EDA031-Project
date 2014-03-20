@@ -23,7 +23,7 @@ PROGS = client_main
 all: $(PROGS)
 
 # Targets rely on implicit rules for compiling and linking
-client_main: src/client/client_main.o src/client/client_command_handler.o src/common/message_handler.o src/client/user_io.o src/common/connection.o src/common/protocol.o src/common/connection_closed_exception.o src/common/protocol_violation_exception.o
+client_main: src/client/client_main.o src/client/client_command_handler.o src/common/message_handler.o src/client/user_io.o src/common/connection.o 
 
 
 # Phony targets
