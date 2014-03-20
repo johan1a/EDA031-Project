@@ -1,5 +1,6 @@
 #include "Database.h"
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -11,9 +12,9 @@ public:
 	
 	}
 
-	virtual string& listNewsGroup(const string& ngName){
-		string s("");
-		return s;
+	virtual vector<pair<int, string& ngName>>& listNewsGroups() const{
+		vector<pair<int, string& ngName>> v;
+		return v;
 	}
 
 	virtual string& createNewsGroup(const string& ngName){

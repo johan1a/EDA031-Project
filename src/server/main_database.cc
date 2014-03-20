@@ -1,5 +1,6 @@
-#include "Database.h"
+#include "database.h"
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -8,23 +9,29 @@ public:
 
 	MainDatabase(){}
 
-	virtual string& listNewsGroups() const{
+	virtual vector<pair<int, string& ngName>>& listNewsGroups() const{
 		map<string& newsGroup, map<string& atricleName, string& theText>>::iterator it;
-		string s("");
+		vector<pair<int, string& ngName>> newsGroups;
+		int i = 1;
 		for(it = database.begin(); it != database.end(); ++it){
-			s.append(it->first);
-			s.append(endl);
+			pair<int, string& ngName> p = make_pair(i, it->first);;
+			newsGroups.push_back();
+			++i;
 		}
-		if(s == ""){
-			s.apppend("No news groups in database.");
-			s.apppend(endl);
-			return s;
+		if(newsGroups.empty()){
+			string s("No newsgroups in database.");
+			pair<int, string& ngName> p = make_pair(i, s);
+			newsGroups.push_back(p);
 		}
-		return s;
+		return newsGroups;
 	}
 
 	virtual string& createNewsGroup(const string& ngName){
 		string s("");
+		if(database.){
+			
+		}
+
 		return s;
 	}
 
