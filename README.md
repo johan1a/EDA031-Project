@@ -1,7 +1,7 @@
 EDA031-Project
 ==============
 
-A fabolous project with lots of things, gismos, objects, and stuff.
+A fabulous project with lots of things, gismos, objects, and stuff.
 
 	Johans informativa git-skola! (Godkänd av Beatrice Ask)
 	
