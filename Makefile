@@ -17,7 +17,7 @@ LDFLAGS =   -g
 #LDFLAGS +=  -stdlib=libc++
 
 # Targets
-PROGS = client_main
+PROGS = client_main news_server
 
 
 all: $(PROGS)
@@ -25,6 +25,7 @@ all: $(PROGS)
 # Targets rely on implicit rules for compiling and linking
 client_main: src/client/client_main.o src/client/client_command_handler.o src/common/message_handler.o src/client/user_io.o src/common/connection.o 
 
+news_server: src/server/server_main.o src/server/server_command_handler.o src/common/server.o src/common/message_handler.o src/client/user_io.o src/common/connection.o 
 
 # Phony targets
 .PHONY: all clean

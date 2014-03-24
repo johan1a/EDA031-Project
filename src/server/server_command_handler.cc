@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
-#include "protocol_violation_exception.h"
+#include "../common/protocol.h"
+#include "../common/protocol_violation_exception.h"
 #include "news_group_does_not_exist_exception.h"
 #include "news_group_already_exists_exception.h"
 #include "article_does_not_exist_exception.h"
@@ -8,7 +9,7 @@
 #include "protocol.h"
 #include "database.h"
 
-ServerCommandHandler::ServerCommandHandler(MessageHandler& msgHandler) : msgH(msgHandler) {}
+ServerCommandHandler::ServerCommandHandler(MessageHandler& msgHandler, Database& database) : msgH(msgHandler), db(database) {}
 
 void ServerCommandHandler::newMessage() {
 	uint cmd = msgH.recvCode();

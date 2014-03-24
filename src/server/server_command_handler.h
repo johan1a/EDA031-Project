@@ -1,10 +1,13 @@
 #ifndef SERVER_COMMAND_HANDLER_H
 #define SERVER_COMMAND_HANDLER_H
 
+#include "database.h"
+#include "../common/message_handler.h"
+
 class ServerCommandHandler {
 public:
-	ServerCommandHandler(MessageHandler&);
-	void newMessage();
+	ServerCommandHandler(MessageHandler&, Database&);
+	void newMessage(); //throws ConnectionClosedException, ProtocolViolationException
 private:
 	void listGroups();
 	void createGroup();
@@ -15,8 +18,8 @@ private:
 	void getArticle();
 	void checkEnd();
 	
-	Database db;
+	Database& db;
 	MessageHandler& msgH;
-}
+};
 
 #endif
