@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include "message_handler.h"
+#include "../common/message_handler.h"
 #include "../common/connection_closed_exception.h"
 #include "../common/protocol_violation_exception.h"
 
@@ -27,8 +27,8 @@ private:
 	const int NE_GROUP_ID = 999999; // These id's do not exist
 	const int NE_ART_ID = 888888;
 
-	int getGroupId(int groupIndex);
-	int getArticleId(int articleIndex);
+	int getGroupId(uint groupIndex);
+	int getArticleId(uint articleIndex);
 	void checkCode(std::string method, int expectedCode, int code) throw(ProtocolViolationException);
 	void checkCondition(bool condition, std::string method, std::string message) throw (ProtocolViolationException);
 };

@@ -190,26 +190,26 @@ vector<string> ClientCommandHandler::getArticle(int groupIndex, int articleIndex
 	
 	return result;
 }
-int ClientCommandHandler::getGroupId(int groupIndex){
-	return (groupIndex >= 0 && groupIndex < groupIds.size()) ? groupIds[groupIndex]
+int ClientCommandHandler::getGroupId(uint groupIndex){
+	return (groupIndex < groupIds.size()) ? groupIds[groupIndex]
 				: NE_GROUP_ID;
 }
 
-int ClientCommandHandler::getArticleId(int articleIndex){
-	return (articleIndex >= 0 && articleIndex < articleIds.size()) ? articleIds[articleIndex]
+int ClientCommandHandler::getArticleId(uint articleIndex){
+	return (articleIndex < articleIds.size()) ? articleIds[articleIndex]
 			: NE_ART_ID;
 }
 
 void ClientCommandHandler::checkCode(string method, int expectedCode, int code) throw(ProtocolViolationException){
 	if (code != expectedCode) {
-		//throw ProtocolViolationException(method, expectedCode, code);
-		throw ProtocolViolationException(); //TODO!!!
+		throw ProtocolViolationException(method, expectedCode, code);
+		
 	}
 }
 
 void ClientCommandHandler::checkCondition(bool condition, string method, string message) throw(ProtocolViolationException){
 	if (!condition) {
-	//	throw new ProtocolViolationException(method, message);
-	throw ProtocolViolationException(); //TODO!!!
+	throw new ProtocolViolationException(method, message);
+	
 	}
 }
