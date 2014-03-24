@@ -68,19 +68,18 @@ private:
 	map<string, map<string, string> > database; //map<newsGroup, map<articleName, theText>>
 
 	bool containsNewsGroup(const string& ngName){
-//		iter_type it = database.find(ngName);
-//		return (it != database.end()));	
-		return true;
-	}
+		iter_type it = database.find(ngName);
+		return (it != database.end());	
+	};
 
 	bool containsArticle(const string& articleName, const string& ngName){
-//		if(containsNewsGroup(ngName)){
-//			iter_type it = database.find(ngName);
-//			iter_type articlePos = it->second.find(articleName);
-//			return (articlePos != it->second.end());
-//		}
-		return true;
-	}
+		if(containsNewsGroup(ngName)){
+			auto it = database.find(ngName);
+			auto articlePos = it->second.find(articleName);
+			return (articlePos != it->second.end());
+		}
+		return false;
+	};
 
 };
 
