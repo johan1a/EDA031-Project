@@ -1,8 +1,6 @@
 #ifndef SERVER_COMMAND_HANDLER_H
 #define SERVER_COMMAND_HANDLER_H
 
-using namespace std;
-
 class ServerCommandHandler {
 public:
 	ServerCommandHandler(MessageHandler&);

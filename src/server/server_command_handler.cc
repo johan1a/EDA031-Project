@@ -96,12 +96,13 @@ void ServerCommandHandler::listArticles() {
 
 void ServerCommandHandler::createArticle() {
 	int ngi = msgH.recvIntParameter();
-	string& title = msgH.recvStringParameter();
-	string& author = msgH.recvStringParameter();
-	string& text = msgH.recvStringParameter();
+	string title = msgH.recvStringParameter();
+	string author = msgH.recvStringParameter();
+	string text = msgH.recvStringParameter();
 	checkEnd();
+	article art(title, author, text);
 	try {
-		db.writeArticle(ngi, title, author, text);
+		db.writeArticle(ngi, art);
 		msgH.sendCode(Protocol.ANS_ACK);
 	} catch (NewsGroupDoesNotExistException& e) {
 		msgH.sendCode(Protocol.ANS_NAK);
