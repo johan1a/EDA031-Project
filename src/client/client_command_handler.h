@@ -4,12 +4,13 @@
 #include <string>
 #include <vector>
 #include "../common/message_handler.h"
+#include "../common/connection.h"
 #include "../common/connection_closed_exception.h"
 #include "../common/protocol_violation_exception.h"
 
 class ClientCommandHandler{
 public:
-	ClientCommandHandler();
+	ClientCommandHandler(Connection &conn);
 	std::vector<std::string> listGroups() throw(ConnectionClosedException);
 	int createGroup(std::string title) throw(ConnectionClosedException);
 	int deleteGroup(int groupIndex) throw (ConnectionClosedException,
@@ -27,8 +28,8 @@ private:
 	const int NE_GROUP_ID = 999999; // These id's do not exist
 	const int NE_ART_ID = 888888;
 
-	int getGroupId(uint groupIndex);
-	int getArticleId(uint articleIndex);
+	int getGroupId(unsigned int groupIndex);
+	int getArticleId(unsigned int articleIndex);
 	void checkCode(std::string method, int expectedCode, int code) throw(ProtocolViolationException);
 	void checkCondition(bool condition, std::string method, std::string message) throw (ProtocolViolationException);
 };

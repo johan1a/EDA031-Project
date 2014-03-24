@@ -7,9 +7,9 @@ CC  = g++
 # Define preprocessor, compiler, and linker flags. Uncomment the # lines
 # if you use clang++ and wish to use libc++ instead of GNU's libstdc++.
 # -g is for debugging.
-CPPFLAGS =  -std=c++0x
+CPPFLAGS =  -std=c++11
 CXXFLAGS =  -O2 -Wall -Wextra -pedantic-errors -Wold-style-cast 
-CXXFLAGS += -std=c++0x
+CXXFLAGS += -std=c++11
 CXXFLAGS += -g
 LDFLAGS =   -g 
 #CPPFLAGS += -stdlib=libc++
@@ -17,15 +17,16 @@ LDFLAGS =   -g
 #LDFLAGS +=  -stdlib=libc++
 
 # Targets
-PROGS = client_main news_server
+PROGS = news_client command
+#news_server
 
 
 all: $(PROGS)
 
 # Targets rely on implicit rules for compiling and linking
-client_main: src/client/client_main.o src/client/client_command_handler.o src/common/message_handler.o src/client/user_io.o src/common/connection.o 
-
-news_server: src/server/server_main.o src/server/server_command_handler.o src/common/server.o src/common/message_handler.o src/client/user_io.o src/common/connection.o 
+news_client: src/client/client.o src/client/client_command_handler.o src/common/message_handler.o src/common/connection.o 
+command: src/client/command.o
+#news_server: src/server/server_main.o src/server/server_command_handler.o src/common/server.o src/common/message_handler.o src/client/user_io.o src/common/connection.o 
 
 # Phony targets
 .PHONY: all clean

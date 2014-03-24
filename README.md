@@ -1,6 +1,27 @@
 EDA031-Project
 ==============
 
+Syntaxen för användarkommandon är just nu:
+
+list -> listar alla grupper
+
+list # -> listar alla artiklar i gruppen med ID #
+
+read # -> läser artikel # i gruppen som man listade i förra kommandot. 
+Kommandot antar alltså att användaren skrivit list #
+
+create group [group name] -> skapar en grupp med namnet [group name]
+
+create article -> skapar en ny artikel. 
+Användaren får sen mata in gruppID, titel, författare och brödtext.
+
+delete group # -> tar bort gruppen med ID #.
+
+delete article # -> tar bort artikel nr # från den grupp man listat i föregående kommando. 
+Kommandot antar alltså att man listat en grupp med list #.
+
+
+
 A fabulous project with lots of things, gismos, objects, and stuff.
 
 	Johans informativa git-skola! (Godkänd av Beatrice Ask)

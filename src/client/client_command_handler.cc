@@ -1,12 +1,10 @@
 #include "client_command_handler.h"
-#include "../common/connection.h"
 #include "../common/protocol.h"
 #include <string>
 
 using namespace std;
 
-ClientCommandHandler::ClientCommandHandler(){
-	Connection conn;
+ClientCommandHandler::ClientCommandHandler(Connection &conn){
 	messageHandler = MessageHandler(conn);
 }
 
@@ -190,12 +188,12 @@ vector<string> ClientCommandHandler::getArticle(int groupIndex, int articleIndex
 	
 	return result;
 }
-int ClientCommandHandler::getGroupId(uint groupIndex){
+int ClientCommandHandler::getGroupId(unsigned int groupIndex){
 	return (groupIndex < groupIds.size()) ? groupIds[groupIndex]
 				: NE_GROUP_ID;
 }
 
-int ClientCommandHandler::getArticleId(uint articleIndex){
+int ClientCommandHandler::getArticleId(unsigned int articleIndex){
 	return (articleIndex < articleIds.size()) ? articleIds[articleIndex]
 			: NE_ART_ID;
 }
