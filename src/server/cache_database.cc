@@ -4,7 +4,9 @@
 #include <map>
 #include "news_group_already_exists_exception.h"
 #include "news_group_does_not_exist_exception.h"
+#include "article_does_not_exist_exception.h"
 #include <iostream>
+#include <algorithm>
 
 
 using namespace std;
@@ -61,8 +63,19 @@ public:
 	}
 
 	//throws NewsGroupDoesNotExistException, ArticleDoesNotExistException
-	virtual Article readArticle(int, int) const{
-		
+	virtual Article readArticle(int ngId, int artId) const{ // newsgroup id, article id
+		auto it = database.find(ngId);
+		if(it == database.end()){
+			throw NewsGroupDoesNotExistException();
+		} else {
+			auto iter = find_if(it->second.articles.begin(), it->second.articles.end(), 
+														[artId](Article a){ return artId  == a.id; });
+			if(iter == it->second.articles.end()){
+				throw ArticleDoesNotExistException();
+			} else {
+				return *iter;
+			}
+		}
 	}
 
 	//NewsGroupDoesNotExistException
