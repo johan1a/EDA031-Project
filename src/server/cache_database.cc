@@ -33,13 +33,12 @@ public:
 		return newsGroups;
 	}
 	
-	//throws NewsGroupAlreadyExistsException
-	virtual void createNewsGroup(const string& ngName){ 	
-	//	try{
-	//		database.insert(ngName);
-	//	}catch (NewsGroupAlreadyExistsException& e){
-	//		cerr << "The news group you are trying to create already exists!" << endl;
-	//	}
+	virtual void createNewsGroup(const string& ngName){
+		vector<Article> v; 	
+		auto it = database.insert(make_pair(ngName, v));
+		if(!it.second){
+			throw NewsGroupAlreadyExistsException();
+		}
 	}
 	
 	//throws NewsGroupDoesNotExistException
@@ -54,12 +53,12 @@ public:
 	}
 
 	//throws NewsGroupDoesNotExistException, ArticleDoesNotExistException
-	virtual article readArticle(int, int) const{
+	virtual Article readArticle(int, int) const{
 		
 	}
 
 	//NewsGroupDoesNotExistException
-	virtual void writeArticle(int, article&){
+	virtual void writeArticle(int, Article&){
 		
 	}
 
@@ -70,7 +69,7 @@ public:
 
 private:
 
-	map<string, vector<Article> > database;	
+	map<string, vector<Article> > database;	//newsgroup, articles
 
 	bool containsNewsGroup(const string& ngName){
 		iter_type it = database.find(ngName);
