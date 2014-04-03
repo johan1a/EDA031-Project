@@ -3,6 +3,7 @@
 #include <vector>
 #include <map>
 #include "news_group_already_exists_exception.h"
+#include "news_group_does_not_exist_exception.h"
 #include <iostream>
 
 
@@ -14,11 +15,13 @@ class CacheDatabase : public Database {
 
 public:
 
-	CacheDatabase(){}
+	CacheDatabase(){
+		latestNewsGroupId = 0;	
+	}
 
 	virtual vector<pair<int, string> > listNewsGroups() const{
 		vector<pair<int, string> > newsGroups;
-		int i = 1;
+/*		int i = 1;
 		pair<int, string> p;
 		for(iter_type it = database.begin(); it != database.end(); ++it){
 			p = make_pair(i, it->first);
@@ -29,27 +32,32 @@ public:
 			string s("No newsgroups in database.");
 			pair<int, string> p = make_pair(i, s);
 			newsGroups.push_back(p);
-		}
+		}*/
 		return newsGroups;
 	}
 	
 	virtual void createNewsGroup(const string& ngName){
-		vector<Article> v; 	
-		auto it = database.insert(make_pair(ngName, v));
+		NewsGroup ng = NewsGroup(ngName);
+		auto it = database.insert(make_pair(++latestNewsGroupId, ng));
 		if(!it.second){
 			throw NewsGroupAlreadyExistsException();
 		}
 	}
 	
-	//throws NewsGroupDoesNotExistException
-	virtual void deleteNewsGroup(int){
-
+	virtual void deleteNewsGroup(int id){
+		size_t i = database.erase(id);
+		if(!i){
+			throw NewsGroupDoesNotExistException();
+		}
 	}
-	
-	//throws NewsGroupDoesNotExistException
-	virtual vector<std::pair<int, std::string> > listArticlesFor(int){
-		vector<std::pair<int, std::string> > v;
-		return v;
+
+	virtual vector<Article> listArticlesFor(int id){
+		auto it = database.find(id);
+		if(it == database.end()){
+			throw NewsGroupDoesNotExistException();
+		} else {
+			return it->second.articles;
+		}
 	}
 
 	//throws NewsGroupDoesNotExistException, ArticleDoesNotExistException
@@ -68,23 +76,7 @@ public:
 	}
 
 private:
-
-	map<string, vector<Article> > database;	//newsgroup, articles
-
-	bool containsNewsGroup(const string& ngName){
-		iter_type it = database.find(ngName);
-		return (it != database.end());	
-	};
-
-	bool containsArticle(const string& articleName, const string& ngName){
-		if(containsNewsGroup(ngName)){
-//			auto it = database.find(ngName);
-	//		auto articlePos = find_if();
-		//	return (articlePos != it->second.end());
-		}
-		return false;
-	};
-
+	map<int, NewsGroup> database;	//newsgroup, articles
 };
 
 
