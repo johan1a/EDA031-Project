@@ -17,9 +17,9 @@ private:
 	void deleteArticle();
 	void getArticle();
 	void checkEnd();
-	
-	Database db;
+
 	MessageHandler msgH;
+	Database db;
 };
 
 #endif
