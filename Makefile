@@ -17,15 +17,16 @@ LDFLAGS =   -g
 #LDFLAGS +=  -stdlib=libc++
 
 # Targets
-PROGS = news_client news_server
+PROGS = news_server
 
 
 all: $(PROGS)
 
 # Targets rely on implicit rules for compiling and linking
-news_client: src/client/client.o src/client/client_command_handler.o src/common/message_handler.o src/common/connection.o
+#news_client: src/client/client.o src/client/client_command_handler.o src/common/message_handler.o src/common/connection.o
 
 news_server: src/server/server_main.o src/server/server_command_handler.o src/server/cache_database.o src/common/server.o src/common/message_handler.o src/common/connection.o
+
 # Phony targets
 .PHONY: all clean
 
@@ -44,3 +45,6 @@ clean:
 # Include the *.d files
 SRC = $(wildcard *.cc)
 include $(SRC:.cc=.d)
+
+
+#g++ -o news_server src/server/server_main.o src/server/server_command_handler.o src/server/cache_database.o src/common/server.o src/common/message_handler.o src/common/connection.o

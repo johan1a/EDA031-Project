@@ -10,7 +10,7 @@
 
 using namespace std;
 
-ServerCommandHandler::ServerCommandHandler(MessageHandler msgHandler, Database database) : msgH(msgHandler), db(database) {}
+ServerCommandHandler::ServerCommandHandler(MessageHandler& msgHandler, Database& database) : msgH(msgHandler), db(database) {}
 
 void ServerCommandHandler::newMessage() {
 	uint cmd = msgH.recvCode();

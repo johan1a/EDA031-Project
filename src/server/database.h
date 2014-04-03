@@ -22,13 +22,14 @@ struct NewsGroup{
 
 class Database{
 public:
-	virtual std::vector<NewsGroup> listNewsGroups() const;
-	virtual void createNewsGroup(const std::string&);
-	virtual void deleteNewsGroup(int);
-	virtual std::vector<Article> listArticlesFor(int) const;
-	virtual Article readArticle(int, int) const;
-	virtual void writeArticle(int, Article&);
-	virtual void deleteArticle(int, int);
+	virtual ~Database() = default;
+	virtual std::vector<NewsGroup> listNewsGroups() const = 0;
+	virtual void createNewsGroup(const std::string&) = 0;
+	virtual void deleteNewsGroup(int) = 0;
+	virtual std::vector<Article> listArticlesFor(int) const = 0;
+	virtual Article readArticle(int, int) const = 0;
+	virtual void writeArticle(int, Article&) = 0;
+	virtual void deleteArticle(int, int) = 0;
 protected:
 	int latestNewsGroupId;
 };

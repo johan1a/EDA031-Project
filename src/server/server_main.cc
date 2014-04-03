@@ -29,13 +29,11 @@ int main(int argc, char* argv[]){
 		cerr << "Server initialization error." << endl;
 		exit(1);
 	}
-	//CacheDatabase cDb();
-	Database test;
-	test = CacheDatabase();
+	CacheDatabase cDb;
 	while (true) {
 			shared_ptr<Connection> conn = server.waitForActivity();
 			MessageHandler msgH(*conn);
-			ServerCommandHandler sCmdH(msgH, test);
+			ServerCommandHandler sCmdH(msgH, cDb);
 		if (conn != nullptr) {
 			try {
 				sCmdH.newMessage();

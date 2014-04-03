@@ -3,6 +3,7 @@
 
 #include <map>
 #include "database.h"
+#include "cache_database.h"
 
 class CacheDatabase : public Database {
 public:
