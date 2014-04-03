@@ -32,12 +32,9 @@ int main(int argc, char* argv[]){
 	CacheDatabase cDb;
 	while (true) {
 			shared_ptr<Connection> conn = server.waitForActivity();
-			cout << "a" << endl;
 		if (conn != nullptr) {
 			MessageHandler msgH(*conn);
-			cout << "b" << endl;
 			ServerCommandHandler sCmdH(msgH, cDb);
-			cout << "c" << endl;
 			try {
 				sCmdH.newMessage();
 			} catch (ConnectionClosedException& e) {
