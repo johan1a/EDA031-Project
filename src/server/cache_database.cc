@@ -21,26 +21,18 @@ public:
 		latestNewsGroupId = 0;	
 	}
 
-	virtual vector<pair<int, string> > listNewsGroups() const{
-		vector<pair<int, string> > newsGroups;
-/*		int i = 1;
-		pair<int, string> p;
-		for(iter_type it = database.begin(); it != database.end(); ++it){
-			p = make_pair(i, it->first);
-			newsGroups.push_back(p);
-			++i;
+	virtual vector<NewsGroup> listNewsGroups() const{
+		vector<NewsGroup> v(database.size());
+		for(auto it = database.begin(); it != database.end(); ++it){
+			v.push_back(it->second);
 		}
-		if(newsGroups.empty()){
-			string s("No newsgroups in database.");
-			pair<int, string> p = make_pair(i, s);
-			newsGroups.push_back(p);
-		}*/
-		return newsGroups;
+		return v;
 	}
 	
 	virtual void createNewsGroup(const string& ngName){
-		NewsGroup ng = NewsGroup(ngName);
-		auto it = database.insert(make_pair(++latestNewsGroupId, ng));
+		NewsGroup ng(ngName);
+		ng.id = ++latestNewsGroupId;
+		auto it = database.insert(make_pair(latestNewsGroupId, ng));
 		if(!it.second){
 			throw NewsGroupAlreadyExistsException();
 		}
@@ -53,7 +45,7 @@ public:
 		}
 	}
 
-	virtual vector<Article> listArticlesFor(int id){
+	virtual vector<Article> listArticlesFor(int id) const{
 		auto it = database.find(id);
 		if(it == database.end()){
 			throw NewsGroupDoesNotExistException();
@@ -62,8 +54,7 @@ public:
 		}
 	}
 
-	//throws NewsGroupDoesNotExistException, ArticleDoesNotExistException
-	virtual Article readArticle(int ngId, int artId) const{ // newsgroup id, article id
+	virtual Article readArticle(int ngId, int artId) const{
 		auto it = database.find(ngId);
 		if(it == database.end()){
 			throw NewsGroupDoesNotExistException();
@@ -78,18 +69,33 @@ public:
 		}
 	}
 
-	//NewsGroupDoesNotExistException
-	virtual void writeArticle(int, Article&){
-		
+	virtual void writeArticle(int id, Article& art){
+		auto it = database.find(id);
+		if(it == database.end()){
+			throw NewsGroupDoesNotExistException();
+		} else {
+			art.id = ++(it->second.latestArticleId);
+			it->second.articles.push_back(art);
+		}
 	}
 
-	//throws NewsGroupDoesNotExistException, ArticleDoesNotExistException
-	virtual void deleteArticle(int, int){
-		
+	virtual void deleteArticle(int ngId, int artId){
+		auto it = database.find(ngId);
+		if(it == database.end()){
+			throw NewsGroupDoesNotExistException();
+		} else {
+			auto iter = find_if(it->second.articles.begin(), it->second.articles.end(), 
+														[artId](Article a){ return artId  == a.id; });
+			if(iter == it->second.articles.end()){
+				throw ArticleDoesNotExistException();
+			} else {
+				it->second.articles.erase(iter, iter);
+			}
+		}
 	}
 
 private:
-	map<int, NewsGroup> database;	//newsgroup, articles
+	map<int, NewsGroup> database;
 };
 
 
