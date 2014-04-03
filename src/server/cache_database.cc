@@ -1,54 +1,93 @@
-#include "Database.h"
+#include "database.h"
 #include <string>
 #include <vector>
+#include <map>
+#include "news_group_already_exists_exception.h"
+#include <iostream>
 
 
 using namespace std;
+typedef map<string, vector<Article> >::const_iterator iter_type;
+ 
 
 class CacheDatabase : public Database {
+
 public:
 
-	CacheDatabase(){
+	CacheDatabase(){}
 
-	
+	virtual vector<pair<int, string> > listNewsGroups() const{
+		vector<pair<int, string> > newsGroups;
+		int i = 1;
+		pair<int, string> p;
+		for(iter_type it = database.begin(); it != database.end(); ++it){
+			p = make_pair(i, it->first);
+			newsGroups.push_back(p);
+			++i;
+		}
+		if(newsGroups.empty()){
+			string s("No newsgroups in database.");
+			pair<int, string> p = make_pair(i, s);
+			newsGroups.push_back(p);
+		}
+		return newsGroups;
 	}
+	
+	//throws NewsGroupAlreadyExistsException
+	virtual void createNewsGroup(const string& ngName){ 	
+	//	try{
+	//		database.insert(ngName);
+	//	}catch (NewsGroupAlreadyExistsException& e){
+	//		cerr << "The news group you are trying to create already exists!" << endl;
+	//	}
+	}
+	
+	//throws NewsGroupDoesNotExistException
+	virtual void deleteNewsGroup(int){
 
-	virtual vector<pair<int, string> >& listNewsGroups() const{
-		vector<pair<int, string> > v;
+	}
+	
+	//throws NewsGroupDoesNotExistException
+	virtual vector<std::pair<int, std::string> > listArticlesFor(int){
+		vector<std::pair<int, std::string> > v;
 		return v;
 	}
 
-	virtual bool createNewsGroup(const string& ngName){
-		string s("");
-		return s;
+	//throws NewsGroupDoesNotExistException, ArticleDoesNotExistException
+	virtual article readArticle(int, int) const{
+		
 	}
 
-	virtual string& deleteNewsGroup(const string& ngName){
-		string s("");
-		return s;
+	//NewsGroupDoesNotExistException
+	virtual void writeArticle(int, article&){
+		
 	}
 
-	virtual string& listArticlesFor(const string& ngName){
-		string s("");
-		return s;
-	}
-
-	virtual string& readArticle(const string& articleName, const string& ngName){
-		string s("");
-		return s;
-	}
-
-	virtual string& writeArticle(const string& articleName, const string& ngName){
-		string s("");
-		return s;
-	}
-
-	virtual string& deleteArticle(const string& articleName, const string& ngName){
-		string s("");
-		return s;
+	//throws NewsGroupDoesNotExistException, ArticleDoesNotExistException
+	virtual void deleteArticle(int, int){
+		
 	}
 
 private:
 
+	map<string, vector<Article> > database;	
+
+	bool containsNewsGroup(const string& ngName){
+		iter_type it = database.find(ngName);
+		return (it != database.end());	
+	};
+
+	bool containsArticle(const string& articleName, const string& ngName){
+		if(containsNewsGroup(ngName)){
+//			auto it = database.find(ngName);
+	//		auto articlePos = find_if();
+		//	return (articlePos != it->second.end());
+		}
+		return false;
+	};
 
 };
+
+
+
+

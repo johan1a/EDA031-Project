@@ -3,7 +3,8 @@
 #include <string>
 #include <vector>
 
-struct article{
+
+struct Article{
 	std::string title;
 	std::string author;
 	std::string text;
@@ -19,6 +20,9 @@ public:
 	virtual article readArticle(int, int) const; //throws NewsGroupDoesNotExistException, ArticleDoesNotExistException
 	virtual void writeArticle(int, article&); //NewsGroupDoesNotExistException
 	virtual void deleteArticle(int, int); //throws NewsGroupDoesNotExistException, ArticleDoesNotExistException
+	
+
+
 
 };
 
