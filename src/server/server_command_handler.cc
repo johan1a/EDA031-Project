@@ -44,11 +44,11 @@ void ServerCommandHandler::newMessage() {
 void ServerCommandHandler::listGroups() {
 	checkEnd();
 	msgH.sendCode(Protocol.ANS_LIST_NG);
-	vector<pair<int, string>> newsGroups = db.listNewsGroups();
+	vector<NewsGroup> newsGroups = db.listNewsGroups();
 	msgH.sendIntParameter(newsGroups.size());
 	for (auto it = newsGroups.begin(); it != newsGroups.end(); ++it) {
-		msgH.sendIntParameter(it->first);
-		msgH.sendStringParameter(it->second);
+		msgH.sendIntParameter(it->id);
+		msgH.sendStringParameter(it->name);
 	}
 }
 
@@ -83,11 +83,11 @@ void ServerCommandHandler::listArticles() {
 	checkEnd();
 	msgH.sendCode(Protocol.ANS_LIST_ART);
 	try {
-		vector<pair<int, string>> articles = db.listArticlesFor(ngi);
+		vector<Article> articles = db.listArticlesFor(ngi);
 		msgH.sendCode(Protocol.ANS_ACK);
 		for(auto it = articles.begin(); it != articles.end(); ++it) {
-			msgH.sendIntParameter(it->first);
-			msgH.sendStringParameter(it->second);
+			msgH.sendIntParameter(it->id);
+			msgH.sendStringParameter(it->title);
 		}
 	} catch (NewsGroupDoesNotExistException& e) {
 		msgH.sendCode(Protocol.ANS_NAK);
