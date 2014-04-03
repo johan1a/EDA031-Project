@@ -6,7 +6,7 @@
 
 class ServerCommandHandler {
 public:
-	ServerCommandHandler(MessageHandler&, Database&);
+	ServerCommandHandler(MessageHandler, Database);
 	void newMessage(); //throws ConnectionClosedException, ProtocolViolationException
 private:
 	void listGroups();
@@ -18,8 +18,8 @@ private:
 	void getArticle();
 	void checkEnd();
 	
-	Database& db;
-	MessageHandler& msgH;
+	Database db;
+	MessageHandler msgH;
 };
 
 #endif

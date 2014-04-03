@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-
 struct Article{
 	std::string title;
 	std::string author;
@@ -24,12 +23,13 @@ struct NewsGroup{
 class Database{
 public:
 	virtual std::vector<NewsGroup> listNewsGroups() const;
-	virtual void createNewsGroup(const std::string&); //throws NewsGroupAlreadyExistsException
-	virtual void deleteNewsGroup(int); //throws NewsGroupDoesNotExistException
-	virtual std::vector<Article> listArticlesFor(int) const; //throws NewsGroupDoesNotExistException
-	virtual Article readArticle(int, int) const; //throws NewsGroupDoesNotExistException, ArticleDoesNotExistException
-	virtual void writeArticle(int, Article&); //NewsGroupDoesNotExistException
-	virtual void deleteArticle(int, int); //throws NewsGroupDoesNotExistException, ArticleDoesNotExistException
+	virtual void createNewsGroup(const std::string&);
+	virtual void deleteNewsGroup(int);
+	virtual std::vector<Article> listArticlesFor(int) const;
+	virtual Article readArticle(int, int) const;
+	virtual void writeArticle(int, Article&);
+	virtual void deleteArticle(int, int);
+protected:
 	int latestNewsGroupId;
 };
 

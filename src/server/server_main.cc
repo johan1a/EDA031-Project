@@ -2,7 +2,7 @@
 #include "../common/server.h"
 #include "../common/connection_closed_exception.h"
 #include "../common/protocol_violation_exception.h"
-#include "database.h"
+#include "cache_database.h"
 #include "server_command_handler.h"
 #include <iostream>
 #include <string>
@@ -29,7 +29,9 @@ int main(int argc, char* argv[]){
 		cerr << "Server initialization error." << endl;
 		exit(1);
 	}
-	Database test();
+	//CacheDatabase cDb();
+	Database test;
+	test = CacheDatabase();
 	while (true) {
 			shared_ptr<Connection> conn = server.waitForActivity();
 			MessageHandler msgH(*conn);
