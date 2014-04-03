@@ -5,8 +5,10 @@
 #include "news_group_already_exists_exception.h"
 #include "article_does_not_exist_exception.h"
 #include "server_command_handler.h"
-#include "../common/Protocol.h"
+#include "../common/protocol.h"
 #include "database.h"
+
+using namespace std;
 
 ServerCommandHandler::ServerCommandHandler(MessageHandler msgHandler, Database database) : msgH(msgHandler), db(database) {}
 
@@ -17,10 +19,10 @@ void ServerCommandHandler::newMessage() {
 			listGroups();
 			break;
 		case Protocol::COM_CREATE_NG:
-			createGroups();
+			createGroup();
 			break;
 		case Protocol::COM_DELETE_NG:
-			deleteGroups();
+			deleteGroup();
 			break;
 		case Protocol::COM_LIST_ART:
 			listArticles();
@@ -35,7 +37,7 @@ void ServerCommandHandler::newMessage() {
 			getArticle();
 			break;
 		default:
-			throw ProtocolViolationException;
+			throw ProtocolViolationException("", "");
 	}
 	msgH.sendCode(Protocol::ANS_END);
 }
@@ -52,7 +54,7 @@ void ServerCommandHandler::listGroups() {
 }
 
 void ServerCommandHandler::createGroup() {
-	string& title = msgH.recvStringParameter();
+	string title = msgH.recvStringParameter();
 	checkEnd();
 	msgH.sendCode(Protocol::ANS_CREATE_NG);
 	try {
@@ -100,7 +102,7 @@ void ServerCommandHandler::createArticle() {
 	string author = msgH.recvStringParameter();
 	string text = msgH.recvStringParameter();
 	checkEnd();
-	article art(title, author, text);
+	Article art(title, author, text);
 	try {
 		db.writeArticle(ngi, art);
 		msgH.sendCode(Protocol::ANS_ACK);
@@ -119,10 +121,10 @@ void ServerCommandHandler::deleteArticle() {
 		msgH.sendCode(Protocol::ANS_ACK);
 	} catch (NewsGroupDoesNotExistException& e) {
 		msgH.sendCode(Protocol::ANS_NAK);
-		msgH.sendCode(Protocol::ERR_NG_DOES_NOT_EXIST;
+		msgH.sendCode(Protocol::ERR_NG_DOES_NOT_EXIST);
 	} catch (ArticleDoesNotExistException& e) {
 		msgH.sendCode(Protocol::ANS_NAK);
-		msgH.sendCode(Protocol::ERR_ART_DOES_NOT_EXIST;
+		msgH.sendCode(Protocol::ERR_ART_DOES_NOT_EXIST);
 	}
 }
 
@@ -131,22 +133,22 @@ void ServerCommandHandler::getArticle() {
 	int arti = msgH.recvIntParameter();
 	checkEnd();
 	try {
-		article = db.readArticle(ngi, arti);
+		Article art = db.readArticle(ngi, arti);
 		msgH.sendCode(Protocol::ANS_ACK);
-		msgH.sendStringParameter(article.title);
-		msgH.sendStringParameter(article.author);
-		msgH.sendStringParameter(article.text);
+		msgH.sendStringParameter(art.title);
+		msgH.sendStringParameter(art.author);
+		msgH.sendStringParameter(art.text);
 	} catch (NewsGroupDoesNotExistException& e) {
 		msgH.sendCode(Protocol::ANS_NAK);
-		msgH.sendCode(Protocol::ERR_NG_DOES_NOT_EXIST;
+		msgH.sendCode(Protocol::ERR_NG_DOES_NOT_EXIST);
 	} catch (ArticleDoesNotExistException& e) {
 		msgH.sendCode(Protocol::ANS_NAK);
-		msgH.sendCode(Protocol::ERR_ART_DOES_NOT_EXIST;
+		msgH.sendCode(Protocol::ERR_ART_DOES_NOT_EXIST);
 	}
 }
 
 void ServerCommandHandler::checkEnd() {
 	if (msgH.recvCode() != Protocol::COM_END) {
-		throw ProtocolViolationException;
+		throw ProtocolViolationException("", "");
 	}
 }
