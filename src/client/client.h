@@ -11,7 +11,6 @@ public:
 	void run();
 private:
 	ClientCommandHandler cmdHandler;
-	std::vector<std::string> prevInput;
 	std::vector<std::string> executeCommand(std::string& input);
 };
 #endif
