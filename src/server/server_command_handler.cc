@@ -93,6 +93,7 @@ void ServerCommandHandler::listArticles() {
 	try {
 		vector<Article> articles = db.listArticlesFor(ngi);
 		msgH.sendCode(Protocol::ANS_ACK);
+		msgH.sendIntParameter(articles.size());
 		for(auto it = articles.begin(); it != articles.end(); ++it) {
 			msgH.sendIntParameter(it->id);
 			msgH.sendStringParameter(it->title);
@@ -109,6 +110,7 @@ void ServerCommandHandler::createArticle() {
 	string author = msgH.recvStringParameter();
 	string text = msgH.recvStringParameter();
 	checkEnd();
+	msgH.sendCode(Protocol::ANS_CREATE_ART);
 	Article art(title, author, text);
 	try {
 		db.writeArticle(ngi, art);
@@ -123,6 +125,7 @@ void ServerCommandHandler::deleteArticle() {
 	int ngi = msgH.recvIntParameter();
 	int arti = msgH.recvIntParameter();
 	checkEnd();
+	msgH.sendCode(Protocol::ANS_DELETE_ART);
 	try {
 		db.deleteArticle(ngi, arti);
 		msgH.sendCode(Protocol::ANS_ACK);
@@ -139,6 +142,7 @@ void ServerCommandHandler::getArticle() {
 	int ngi = msgH.recvIntParameter();
 	int arti = msgH.recvIntParameter();
 	checkEnd();
+	msgH.sendCode(Protocol::ANS_GET_ART);
 	try {
 		Article art = db.readArticle(ngi, arti);
 		msgH.sendCode(Protocol::ANS_ACK);

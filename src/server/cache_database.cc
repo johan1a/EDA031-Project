@@ -80,9 +80,11 @@ void CacheDatabase::deleteArticle(int ngId, int artId){
 		auto iter = find_if(it->second.articles.begin(), it->second.articles.end(), 
 													[artId](Article a){ return artId  == a.id; });
 		if(iter == it->second.articles.end()){
+			cout << "the end is nigh" << endl;
 			throw ArticleDoesNotExistException();
 		} else {
-			it->second.articles.erase(iter, iter);
+			cout << "the end is delayed" << endl;
+			it->second.articles.erase(iter);
 		}
 	}
 }
