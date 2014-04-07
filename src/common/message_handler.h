@@ -22,6 +22,8 @@ public:
 	 */
 	MessageHandler(const Connection& conn);
 
+	void changeConnection(const Connection& conn);
+
 	/**
 	 * Transmit a code (a constant from the Protocol class).
 	 * 

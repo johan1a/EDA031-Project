@@ -20,6 +20,10 @@ MessageHandler::MessageHandler(const Connection& conn) {
 	this->conn = conn;
 }
 
+void MessageHandler::changeConnection(const Connection& conn) {
+	this->conn = conn;
+}
+
 /**
  * Transmit a code (a constant from the Protocol class).
  * 

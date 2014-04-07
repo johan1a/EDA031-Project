@@ -30,11 +30,12 @@ int main(int argc, char* argv[]){
 		exit(1);
 	}
 	CacheDatabase cDb;
+	MessageHandler msgH;
+	ServerCommandHandler sCmdH(msgH, cDb);
 	while (true) {
 			shared_ptr<Connection> conn = server.waitForActivity();
 		if (conn != nullptr) {
-			MessageHandler msgH(*conn);
-			ServerCommandHandler sCmdH(msgH, cDb);
+			msgH.changeConnection(*conn);
 			try {
 				sCmdH.newMessage();
 			} catch (ConnectionClosedException& e) {

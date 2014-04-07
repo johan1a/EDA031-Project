@@ -80,6 +80,7 @@ bool Server::isReady() const {
 }
 
 std::shared_ptr<Connection> Server::waitForActivity() const {
+	std::cout << "Det är 7:e april" << std::endl;
 	if (my_socket == -1) {
 		error("waitForActivity: server not opened");
 	}

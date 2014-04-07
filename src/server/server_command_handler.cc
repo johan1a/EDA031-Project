@@ -17,29 +17,35 @@ void ServerCommandHandler::newMessage() {
 	switch (cmd) {
 		case Protocol::COM_LIST_NG:
 			listGroups();
+			msgH.sendCode(Protocol::ANS_END);
 			break;
 		case Protocol::COM_CREATE_NG:
 			createGroup();
+			msgH.sendCode(Protocol::ANS_END);
 			break;
 		case Protocol::COM_DELETE_NG:
 			deleteGroup();
+			msgH.sendCode(Protocol::ANS_END);
 			break;
 		case Protocol::COM_LIST_ART:
 			listArticles();
+			msgH.sendCode(Protocol::ANS_END);
 			break;
 		case Protocol::COM_CREATE_ART:
 			createArticle();
+			msgH.sendCode(Protocol::ANS_END);
 			break;
 		case Protocol::COM_DELETE_ART:
 			deleteArticle();
+			msgH.sendCode(Protocol::ANS_END);
 			break;
 		case Protocol::COM_GET_ART:
 			getArticle();
+			msgH.sendCode(Protocol::ANS_END);
 			break;
 		default:
 			throw ProtocolViolationException("", "");
 	}
-	msgH.sendCode(Protocol::ANS_END);
 }
 
 void ServerCommandHandler::listGroups() {
