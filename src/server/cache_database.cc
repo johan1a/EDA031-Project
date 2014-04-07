@@ -15,7 +15,7 @@ CacheDatabase::CacheDatabase(){
 }
 
 vector<NewsGroup> CacheDatabase::listNewsGroups() const{
-	vector<NewsGroup> v(database.size());
+	vector<NewsGroup> v;
 	for(auto it = database.begin(); it != database.end(); ++it){
 		v.push_back(it->second);
 	}

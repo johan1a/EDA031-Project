@@ -53,6 +53,7 @@ void ServerCommandHandler::listGroups() {
 	msgH.sendCode(Protocol::ANS_LIST_NG);
 	vector<NewsGroup> newsGroups = db.listNewsGroups();
 	msgH.sendIntParameter(newsGroups.size());
+
 	for (auto it = newsGroups.begin(); it != newsGroups.end(); ++it) {
 		msgH.sendIntParameter(it->id);
 		msgH.sendStringParameter(it->name);
