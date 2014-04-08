@@ -1,54 +1,52 @@
-#include "Database.h"
 #include <string>
 #include <vector>
+#include <iostream>
+#include "database.h"
+#include "main_database.h"
 
 
 using namespace std;
 
-class MainDatabase : public Database {
-public:
 
-	MainDatabase(){
+MainDatabase::MainDatabase(){
+	cout << "Cogito ergo sum" << endl;
+}
 
-	
-	}
+std::vector<NewsGroup> MainDatabase::listNewsGroups() const{
+	vector<NewsGroup> v;
+	return v;
+}
 
-	virtual vector<pair<int, string> >& listNewsGroups() const{
-		vector<pair<int, string> > v;
-		return v;
-	}
+void MainDatabase::createNewsGroup(const string& ngName){
+//	string s("");
+//	return s;
+}
 
-	virtual bool createNewsGroup(const string& ngName){
-		string s("");
-		return s;
-	}
-
-	virtual string& deleteNewsGroup(const string& ngName){
-		string s("");
-		return s;
-	}
-
-	virtual string& listArticlesFor(const string& ngName){
-		string s("");
-		return s;
-	}
-
-	virtual string& readArticle(const string& articleName, const string& ngName){
-		string s("");
-		return s;
-	}
-
-	virtual string& writeArticle(const string& articleName, const string& ngName){
-		string s("");
-		return s;
-	}
-
-	virtual string& deleteArticle(const string& articleName, const string& ngName){
-		string s("");
-		return s;
-	}
-
-private:
+void MainDatabase::deleteNewsGroup(int){
+//	string s("");
+//	return s;
+}
 
 
-};
+std::vector<Article> MainDatabase::listArticlesFor(int) const {
+	vector<Article> s;
+	return s;
+}
+
+
+Article MainDatabase::readArticle(int, int) const {
+	Article s("a","b","c");
+	return s;
+}
+
+void MainDatabase::writeArticle(int, Article&) {
+//	string s("");
+//	return s;
+}
+
+void MainDatabase::deleteArticle(int, int){
+//	string s("");
+//	return s;
+}
+
+

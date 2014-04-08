@@ -25,10 +25,12 @@ vector<NewsGroup> CacheDatabase::listNewsGroups() const{
 void CacheDatabase::createNewsGroup(const string& ngName){
 	NewsGroup ng(ngName);
 	ng.id = ++latestNewsGroupId;
-	auto it = database.insert(make_pair(latestNewsGroupId, ng));
-	if(!it.second){
+	auto iter = find_if(database.begin(), database.end(), 
+												[ngName](pair<int, NewsGroup> p){ return p.second.name == ngName; });
+	if(iter != database.end()){
 		throw NewsGroupAlreadyExistsException();
 	}
+	database.insert(make_pair(latestNewsGroupId, ng));
 }
 
 void CacheDatabase::deleteNewsGroup(int id){
@@ -53,7 +55,7 @@ Article CacheDatabase::readArticle(int ngId, int artId) const{
 		throw NewsGroupDoesNotExistException();
 	} else {
 		auto iter = find_if(it->second.articles.begin(), it->second.articles.end(), 
-													[artId](Article a){ return artId  == a.id; });
+													[artId](Article a){ return artId == a.id; });
 		if(iter == it->second.articles.end()){
 			throw ArticleDoesNotExistException();
 		} else {
@@ -80,10 +82,8 @@ void CacheDatabase::deleteArticle(int ngId, int artId){
 		auto iter = find_if(it->second.articles.begin(), it->second.articles.end(), 
 													[artId](Article a){ return artId  == a.id; });
 		if(iter == it->second.articles.end()){
-			cout << "the end is nigh" << endl;
 			throw ArticleDoesNotExistException();
 		} else {
-			cout << "the end is delayed" << endl;
 			it->second.articles.erase(iter);
 		}
 	}

@@ -117,7 +117,6 @@ unsigned char Connection::read() const {
 	int count = ::read(my_socket, &data, 1);
 	if (count != 1) {
 		throw ConnectionClosedException();
-		std::cout << "Det är mitt fel" << std::endl;
 	}
 	return data;
 }
