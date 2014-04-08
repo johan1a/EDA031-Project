@@ -4,6 +4,8 @@
 
 using namespace std;
 
+ClientCommandHandler::ClientCommandHandler(){}
+
 ClientCommandHandler::ClientCommandHandler(Connection &conn){
 	messageHandler = MessageHandler(conn);
 }

@@ -10,6 +10,7 @@
 
 class ClientCommandHandler{
 public:
+	ClientCommandHandler();
 	ClientCommandHandler(Connection &conn);
 	std::vector<std::string> listGroups() throw(ConnectionClosedException);
 	int createGroup(std::string title) throw(ConnectionClosedException);
