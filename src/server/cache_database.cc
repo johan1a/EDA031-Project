@@ -1,6 +1,4 @@
 #include "cache_database.h"
-#include <string>
-#include <vector>
 #include <map>
 #include "news_group_already_exists_exception.h"
 #include "news_group_does_not_exist_exception.h"

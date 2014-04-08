@@ -9,8 +9,9 @@ struct Article{
 	std::string text;
 	int id;
 	Article() {}
+	Article(std::string& ti, std::string& au, std::string& te, int ID) : title(ti), author(au), text(te), id(ID) {}
 	Article(std::string& ti, std::string& au, std::string& te) : title(ti), author(au), text(te), id() {}
-	Article(std::string& ti, std::string& au) : title(ti), author(au) {}
+	Article(std::string& ti, std::string& au) : title(ti), author(au) {} //används denna?
 };
 
 struct NewsGroup{
@@ -27,13 +28,13 @@ struct NewsGroup{
 class Database{
 public:
 	virtual ~Database() = default;
-	virtual std::vector<NewsGroup> listNewsGroups() const = 0;
-	virtual void createNewsGroup(const std::string&) = 0;
+	virtual void createNewsGroup(const std::string& groupName) = 0;
+	virtual void deleteArticle(int groupID, int articleID) = 0;
 	virtual void deleteNewsGroup(int groupID) = 0;
 	virtual std::vector<Article> listArticlesFor(int groupID) const = 0;
+	virtual std::vector<NewsGroup> listNewsGroups() const = 0;
 	virtual Article readArticle(int groupID, int articleID) const = 0;
 	virtual void writeArticle(int groupID, Article&) = 0;
-	virtual void deleteArticle(int groupID, int articleID) = 0;
 protected:
 	int latestNewsGroupId;
 };
