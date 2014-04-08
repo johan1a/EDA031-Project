@@ -9,12 +9,12 @@ class CacheDatabase : public Database {
 public:
 	CacheDatabase();
 	std::vector<NewsGroup> listNewsGroups() const;
-	void createNewsGroup(const std::string&);
-	void deleteNewsGroup(int);
-	std::vector<Article> listArticlesFor(int) const;
-	Article readArticle(int, int) const;
-	void writeArticle(int, Article&);
-	void deleteArticle(int, int);
+	void createNewsGroup(const std::string& groupName);
+	void deleteNewsGroup(int groupID);
+	std::vector<Article> listArticlesFor(int groupID) const;
+	Article readArticle(int groupID, int articleID) const;
+	void writeArticle(int groupID, Article& article);
+	void deleteArticle(int groupID, int articleID);
 private:
 	std::map<int, NewsGroup> database;
 };

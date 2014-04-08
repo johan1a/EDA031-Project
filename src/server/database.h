@@ -29,11 +29,11 @@ public:
 	virtual ~Database() = default;
 	virtual std::vector<NewsGroup> listNewsGroups() const = 0;
 	virtual void createNewsGroup(const std::string&) = 0;
-	virtual void deleteNewsGroup(int) = 0;
-	virtual std::vector<Article> listArticlesFor(int) const = 0;
-	virtual Article readArticle(int, int) const = 0;
-	virtual void writeArticle(int, Article&) = 0;
-	virtual void deleteArticle(int, int) = 0;
+	virtual void deleteNewsGroup(int groupID) = 0;
+	virtual std::vector<Article> listArticlesFor(int groupID) const = 0;
+	virtual Article readArticle(int groupID, int articleID) const = 0;
+	virtual void writeArticle(int groupID, Article&) = 0;
+	virtual void deleteArticle(int groupID, int articleID) = 0;
 protected:
 	int latestNewsGroupId;
 };
