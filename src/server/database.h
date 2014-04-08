@@ -8,7 +8,9 @@ struct Article{
 	std::string author;
 	std::string text;
 	int id;
-	Article(std::string ti, std::string au, std::string te) : title(ti), author(au), text(te), id() {}
+	Article() {}
+	Article(std::string& ti, std::string& au, std::string& te) : title(ti), author(au), text(te), id() {}
+	Article(std::string& ti, std::string& au) : title(ti), author(au) {}
 };
 
 struct NewsGroup{
@@ -16,8 +18,10 @@ struct NewsGroup{
 	std::vector<Article> articles;
 	int latestArticleId;
 	int id;
+	NewsGroup(std::string n, int ID) : name(n), articles(), latestArticleId(), id(ID) {}
 	NewsGroup(std::string n) : name(n), articles(), latestArticleId(), id() {}
 	NewsGroup() : name(), articles(), latestArticleId(), id() {}
+
 };
 
 class Database{
