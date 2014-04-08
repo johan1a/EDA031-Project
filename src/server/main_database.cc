@@ -15,9 +15,9 @@ MainDatabase::MainDatabase(){
 
 void MainDatabase::createNewsGroup(const string& groupName){
 	if(!groupExists(groupName)){
-		string groupDirString = findFreeGroupPath();
-		mkdir(groupDirString.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); // TODO mega unstrict permissions
-		ofstream nameFile(groupDirString + "/GROUP_NAME");
+		string groupPath = findFreeGroupPath();
+		mkdir(groupPath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); // TODO mega unstrict permissions
+		ofstream nameFile(groupPath + GROUP_NAME_FILE);
 		nameFile << groupName;
 		nameFile.close();
 	}else{
@@ -39,7 +39,6 @@ void MainDatabase::deleteArticle(int groupID, int articleID){
 void MainDatabase::deleteNewsGroup(int groupID){
 	string groupPath = databaseRootPath + to_string(groupID);
 	DIR *groupDir = opendir(groupPath.c_str());
-
 	if(groupDir != nullptr){
 		struct dirent *dirEnt = nullptr;
 		while (dirEnt = readdir (groupDir)){
@@ -49,34 +48,31 @@ void MainDatabase::deleteNewsGroup(int groupID){
 				remove(entryPath.c_str());
 			}
 		}
+		delete dirEnt;
 		rmdir(groupPath.c_str());
-		//delete dirent ;
+		closedir(groupDir);
 	}else{
 		throw NewsGroupDoesNotExistException();
 	}
-	closedir (groupDir);
 }
 
 vector<Article> MainDatabase::listArticlesFor(int groupID) const{
 	vector<Article> articles;
 	DIR *groupDir = openGroupDir(groupID);
-
 	if(groupDir != nullptr){
 		struct dirent *dirEnt;
 		while (dirEnt = readdir (groupDir)){
 			string entryName(dirEnt->d_name);
 			if(entryName != "." && entryName != ".." && entryName != "GROUP_NAME"){
-				string articlePath = databaseRootPath + to_string(groupID) + "/" + entryName;
 				articles.push_back(makeArticle(groupID, stoi(entryName)));
 			}
 		}
+		delete dirEnt;
 		closedir(groupDir);
-		//delete groupDir;
-		//delete (dirent);
 	}else{
 		throw NewsGroupDoesNotExistException();
 	}
-	sort(articles.begin(), articles.end(), [](const Article & a1, const Article & a2){ return a1.id < a2.id;});
+	sort(articles.begin(), articles.end(), [](const Article& a1, const Article& a2){ return a1.id < a2.id; });
 	return articles;
 }
 
@@ -91,11 +87,10 @@ vector<NewsGroup> MainDatabase::listNewsGroups() const{
 				groups.push_back(makeGroup(stoi(groupID)));
 			}
 		}
+		delete group;
 		closedir (databaseDir);
-		delete group; 
 	}
-	//delete databaseDir;
-	sort(groups.begin(), groups.end(), [](const NewsGroup & g1, const NewsGroup & g2){ return g1.id < g2.id;});
+	sort(groups.begin(), groups.end(), [](const NewsGroup & g1, const NewsGroup & g2){ return g1.id < g2.id; });
 	return groups;
 }
 
@@ -105,8 +100,8 @@ Article MainDatabase::readArticle(int groupID, int articleID) const{
 
 void MainDatabase::writeArticle(int groupID, Article& article) {
 	try{
-	string articlePath = findFreeArticlePath(groupID);
-	saveArticleToFile(article, articlePath);
+		string articlePath = findFreeArticlePath(groupID);
+		saveArticleToFile(article, articlePath);
 	}catch(NewsGroupDoesNotExistException e){
 		throw NewsGroupDoesNotExistException();
 	}
@@ -138,7 +133,6 @@ string MainDatabase::findFreeArticlePath(int groupID)  const{
 			++freeArticleID;
 			articlePath = groupPath + to_string(freeArticleID);
 			existingArticle.open(articlePath);
-
 		}while(existingArticle);
 	}else{
 		throw NewsGroupDoesNotExistException();
@@ -147,7 +141,7 @@ string MainDatabase::findFreeArticlePath(int groupID)  const{
 }
 
 string MainDatabase::getGroupName(int groupID) const{
-	ifstream groupStream(databaseRootPath + to_string(groupID) + "/" + "GROUP_NAME");
+	ifstream groupStream(databaseRootPath + to_string(groupID) + GROUP_NAME_FILE);
 	string groupName;
 	getline(groupStream, groupName);
 	groupStream.close();
@@ -162,7 +156,6 @@ bool MainDatabase::groupExists(int groupID) const{
 bool MainDatabase::groupExists(const string& groupName) const{
 	DIR* root = opendir(databaseRootPath.c_str());
 	struct dirent* group;
-
 	while(group = readdir(root)){
 		string groupID(group->d_name);
 		if(groupID != ".." && groupID != "."){
@@ -173,6 +166,7 @@ bool MainDatabase::groupExists(const string& groupName) const{
 			}
 		}
 	}
+	delete group;
 	closedir(root);
 	return false;
 }
@@ -210,7 +204,7 @@ Article MainDatabase::makeArticle(int groupID, int articleID) const{
 }
 
 NewsGroup MainDatabase::makeGroup(int groupID) const{
-	ifstream groupStream(databaseRootPath + to_string(groupID) + "/" + "GROUP_NAME");
+	ifstream groupStream(databaseRootPath + to_string(groupID) + GROUP_NAME_FILE);
 	string groupName;
 	getline(groupStream, groupName);
 	groupStream.close();
@@ -218,8 +212,8 @@ NewsGroup MainDatabase::makeGroup(int groupID) const{
 }
 
 DIR* MainDatabase::openGroupDir(int groupID)  const{
-	string groupDirString(databaseRootPath + to_string(groupID));
-	return opendir(groupDirString.c_str());
+	string groupPath(databaseRootPath + to_string(groupID));
+	return opendir(groupPath.c_str());
 }
 
 void MainDatabase::saveArticleToFile(Article& article, string& articlePath) const{

@@ -16,7 +16,8 @@ public:
 	Article readArticle(int groupID, int articleID) const override;
 	void writeArticle(int groupID, Article&) override;
 private:
-	std::string databaseRootPath = "./database/";
+	const std::string databaseRootPath = "./database/";
+	const std::string GROUP_NAME_FILE = "/GROUP_NAME";
 	std::string findFreeArticlePath(int groupID) const;
 	std::string findFreeGroupPath() const;
 	std::string getGroupName(int groupID) const;
