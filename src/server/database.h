@@ -16,8 +16,10 @@ struct NewsGroup{
 	std::vector<Article> articles;
 	int latestArticleId;
 	int id;
+	NewsGroup(std::string n, int ID) : name(n), articles(), latestArticleId(), id(ID) {}
 	NewsGroup(std::string n) : name(n), articles(), latestArticleId(), id() {}
 	NewsGroup() : name(), articles(), latestArticleId(), id() {}
+
 };
 
 class Database{
