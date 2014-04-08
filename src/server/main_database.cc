@@ -13,13 +13,11 @@ using namespace std;
 MainDatabase::MainDatabase(){
 	initDatabase();
 	createNewsGroup("tjockisgruppen_lel");
-
 	string title = "titel", author = "tjockis", text = "sdgkgdgdmgdmppmdasg";
-
 
 	Article a(title,author,text);
 	writeArticle(2,a);
-
+	deleteArticle(2,0);
 }
 
 vector<NewsGroup> MainDatabase::listNewsGroups() const{
@@ -30,13 +28,12 @@ vector<NewsGroup> MainDatabase::listNewsGroups() const{
 	struct dirent *group = nullptr;
 	struct dirent *dirEnt = nullptr;
 
-	databaseDir = opendir(databaseRoot.c_str());
+	databaseDir = opendir(databaseRootPath.c_str());
 	if(databaseDir != nullptr){
 		while ((group = readdir (databaseDir)) != nullptr){
-
 			string groupID(group->d_name);
 			if(groupID != "." && groupID != ".."){
-				string groupDirString (databaseRoot + "/" + groupID);
+				string groupDirString (databaseRootPath + "/" + groupID);
 				groupDir = opendir(groupDirString.c_str());
 				
 				if(groupDir != nullptr){
@@ -45,7 +42,7 @@ vector<NewsGroup> MainDatabase::listNewsGroups() const{
 
 						if(entryName == "GROUP_NAME"){
 							ifstream articleStream;
-							articleStream.open(databaseRoot + "/" + groupID + "/" + entryName);
+							articleStream.open(databaseRootPath + "/" + groupID + "/" + entryName);
 							string groupName;
 							articleStream >> groupName;
 							articleStream.close();
@@ -64,13 +61,13 @@ void MainDatabase::createNewsGroup(const string& ngName){
 	DIR *databaseDir = nullptr;
 	DIR *groupDir = nullptr;
 
-	databaseDir = opendir(databaseRoot.c_str());
+	databaseDir = opendir(databaseRootPath.c_str());
 
 	int freeGroupID = 0;
-	string groupDirString = databaseRoot + "/" + to_string(freeGroupID);
+	string groupDirString = databaseRootPath + "/" + to_string(freeGroupID);
 	while((groupDir = opendir(groupDirString.c_str())) != nullptr){
 		++freeGroupID;
-		groupDirString = databaseRoot + "/" + to_string(freeGroupID);
+		groupDirString = databaseRootPath + "/" + to_string(freeGroupID);
 	}
 
 	mkdir(groupDirString.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); // TODO mega unstrict permissions
@@ -87,7 +84,7 @@ void MainDatabase::deleteNewsGroup(int ngID){
 	DIR *groupDir = nullptr;
 	struct dirent *dirEnt = nullptr;
 
-	string groupDirString = databaseRoot + "/" + to_string(ngID);
+	string groupDirString = databaseRootPath + "/" + to_string(ngID);
 	groupDir = opendir(groupDirString.c_str());
 
 	if(groupDir != nullptr){
@@ -103,20 +100,17 @@ void MainDatabase::deleteNewsGroup(int ngID){
 
 vector<Article> MainDatabase::listArticlesFor(int ngID) const{
 	vector<Article> v;
-
 	DIR *databaseDir = nullptr;
 	DIR *groupDir = nullptr;
 	struct dirent *group = nullptr;
 	struct dirent *dirEnt = nullptr;
 
-	databaseDir = opendir(databaseRoot.c_str());
+	databaseDir = opendir(databaseRootPath.c_str());
 	if(databaseDir != nullptr){
 		while ((group = readdir (databaseDir)) != nullptr){
-
 			string groupID(group->d_name);
-
 			if(groupID != ".." && groupID != "." && stoi(groupID) == ngID){
-				string groupDirString (databaseRoot + "/" + groupID);
+				string groupDirString (databaseRootPath + "/" + groupID);
 				groupDir = opendir(groupDirString.c_str());
 				
 				if(groupDir != nullptr){
@@ -125,7 +119,7 @@ vector<Article> MainDatabase::listArticlesFor(int ngID) const{
 
 						if(entryName != "." && entryName != ".." && entryName != "GROUP_NAME"){
 							ifstream articleStream;
-							articleStream.open(databaseRoot + "/" + groupID + "/" + entryName);
+							articleStream.open(databaseRootPath + "/" + groupID + "/" + entryName);
 							string title, author;
 							articleStream >> title;
 							articleStream >> author;
@@ -150,14 +144,14 @@ Article MainDatabase::readArticle(int ngID, int articleID) const{
 	struct dirent *group = nullptr;
 	struct dirent *dirEnt = nullptr;
 
-	databaseDir = opendir(databaseRoot.c_str());
+	databaseDir = opendir(databaseRootPath.c_str());
 	if(databaseDir != nullptr){
 		while ((group = readdir (databaseDir)) != nullptr){
 
 			string groupID(group->d_name);
 
 			if(groupID != ".." && groupID != "." && stoi(groupID) == ngID){
-				string groupDirString (databaseRoot + "/" + groupID);
+				string groupDirString (databaseRootPath + "/" + groupID);
 				groupDir = opendir(groupDirString.c_str());
 				
 				if(groupDir != nullptr){
@@ -166,7 +160,7 @@ Article MainDatabase::readArticle(int ngID, int articleID) const{
 
 						if(entryName != "." && entryName != ".." && entryName != "GROUP_NAME" && stoi(entryName) == articleID){
 							ifstream articleStream;
-							articleStream.open(databaseRoot + "/" + groupID + "/" + entryName);
+							articleStream.open(databaseRootPath + "/" + groupID + "/" + entryName);
 							string title, author, text, line;
 							articleStream >> title;
 							articleStream >> author;
@@ -190,36 +184,41 @@ Article MainDatabase::readArticle(int ngID, int articleID) const{
 
 void MainDatabase::writeArticle(int groupIndex, Article& article){
 	DIR *groupDir = nullptr;
-
-	string groupDirString = databaseRoot + "/" + to_string(groupIndex);
-	groupDir = opendir(groupDirString.c_str());
+	string groupPath = databaseRootPath + to_string(groupIndex);
+	groupDir = opendir(groupPath.c_str());
 
 	if(groupDir != nullptr){
 		int freeArticleID = 0;
-		string articlePath(groupDirString + to_string(freeArticleID));
-
+		string articlePath(groupPath + "/" + to_string(freeArticleID));
 		while(opendir(articlePath.c_str()) != nullptr){
 			++freeArticleID;
-			articlePath = databaseRoot + "/" + to_string(groupIndex) + "/" + to_string(freeArticleID);
+			articlePath = groupPath + "/" + to_string(freeArticleID);
 		}
 
 		ofstream nameFile;
-		nameFile.open (databaseRoot + "/" + to_string(groupIndex) + "/" + to_string(freeArticleID)); //articlePath
+		nameFile.open(articlePath);
 		nameFile << article.title << endl;
 		nameFile << article.author << endl;
 		nameFile << article.text << endl;
 		nameFile.close();
+		closedir (groupDir);
 	}
-	closedir (groupDir);
 }
 
-void MainDatabase::deleteArticle(int articleName, int ngName){
-	string s("");
+void MainDatabase::deleteArticle(int groupID, int articleID){
+	DIR *groupDir = nullptr;
+	string groupPath = databaseRootPath + to_string(groupID);
+	groupDir = opendir(groupPath.c_str());
+
+	if(groupDir != nullptr){
+		string articlePath = groupPath + "/" + to_string(articleID);
+		remove(articlePath.c_str());
+	}
 }
 
 void MainDatabase::initDatabase(){
-	if (opendir(databaseRoot.c_str()) == nullptr){
+	if (opendir(databaseRootPath.c_str()) == nullptr){
 		cout << "Creating root directory..." << endl;
-		mkdir(databaseRoot.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); // TODO mega unstrict permissions
+		mkdir(databaseRootPath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); // TODO mega unstrict permissions
 	}
 }

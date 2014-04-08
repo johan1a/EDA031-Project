@@ -15,7 +15,7 @@ public:
 	virtual void writeArticle(int, Article&) override;
 	virtual void deleteArticle(int, int) override;
 private:
-	std::string databaseRoot = "./database";
+	std::string databaseRootPath = "./database/";
 	std::string groupDir = "./groups";
 	void initDatabase();
 };
