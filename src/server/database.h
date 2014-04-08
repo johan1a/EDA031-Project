@@ -8,7 +8,9 @@ struct Article{
 	std::string author;
 	std::string text;
 	int id;
-	Article(std::string ti, std::string au, std::string te) : title(ti), author(au), text(te), id() {}
+	Article() {}
+	Article(std::string& ti, std::string& au, std::string& te) : title(ti), author(au), text(te), id() {}
+	Article(std::string& ti, std::string& au) : title(ti), author(au) {}
 };
 
 struct NewsGroup{
