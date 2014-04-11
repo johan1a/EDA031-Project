@@ -101,15 +101,15 @@ Article MainDatabase::readArticle(int groupID, int articleID) const{
 }
 
 void MainDatabase::writeArticle(int groupID, Article& article) {
-	try{
+		if(!groupExists(groupID)){
+			throw NewsGroupDoesNotExistException();
+		}
+
 		string groupPath = databaseRootPath + to_string(groupID) + "/";
 		string articlePath = groupPath + to_string(freeArticleID);
 		saveArticleToFile(article, articlePath);
 		++freeArticleID;
-		saveFreeIDS();	
-	}catch(NewsGroupDoesNotExistException e){
-		throw NewsGroupDoesNotExistException();
-	}
+		saveFreeIDS();
 }
 
 string MainDatabase::getGroupName(int groupID) const{
