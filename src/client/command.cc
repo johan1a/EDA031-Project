@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iostream>
 #include <sstream>
 #include <stdexcept>
 #include <iterator>
@@ -57,26 +58,34 @@ void Command::create(vector<string>& tokens) {
 		if(tokens[1] == "group"){ 
 			string groupName;
 			cout << "Enter group name: " << endl;
-			cin >> groupName;
+			getline(cin, groupName);
 			returnCode = cmdHandler.createGroup(groupName);
 		} else if (tokens[1] == "article") {
 			string title, author, text;
 			int index;
-			
+			string ind;
 			cout << "Enter group index: " << endl;
-			cin >> index;
+			//cin >> index;
+			getline(cin, ind);
+			try{
+				index=stoi(ind);
+			} catch (const invalid_argument& ia) {
+				throw SyntaxException("Expected a News Group ID");
+			} catch (const std::out_of_range& oor) {
+				throw SyntaxException("Expected a News Group ID");
+			}
 			cout << "Enter article title: " << endl;
-			cin >> title;
+			getline(cin, title);
 			cout << "Enter author: " << endl;
-			cin >> author;
+			getline(cin, author);
 			string temp;
 			string end = "done";
+			cout << "Enter text: " << endl;
 			while(temp != end) {
-				cout << "Enter text: " << endl;
-				cin >> temp;
+				getline(cin, temp);
 				text = text + temp + '\n';
 			}
-			text = text.substr(0, text.length() - end.length());
+			text = text.substr(0, text.length() - end.length() - 1);
 			
 			returnCode = cmdHandler.createArticle(index, title, author, text);
 		} else {
@@ -93,12 +102,13 @@ void Command::create(vector<string>& tokens) {
 }
 
 void Command::del(vector<string>& tokens) {
-	int returnCode = 1;
 	if (tokens.size() >= 2) {
 		if (tokens[1] == "group") {
 			if (tokens.size() == 3) {
 				try {
-					returnCode = cmdHandler.deleteGroup(stoi(tokens[2]));
+					if(cmdHandler.deleteGroup(stoi(tokens[2])) != 0) {
+						throw ServerException("The news group does not exist.");
+					}
 				} catch (const invalid_argument& ia) {
 					throw SyntaxException("Usage: delete group <News Group ID>");
 				} catch (const std::out_of_range& oor) {
@@ -110,7 +120,12 @@ void Command::del(vector<string>& tokens) {
 		} else if (tokens[1] == "article") {
 			if (tokens.size() == 4) {
 				try {
-					returnCode = cmdHandler.deleteArticle(stoi(tokens[2]), stoi(tokens[3]));
+					int error = cmdHandler.deleteArticle(stoi(tokens[2]), stoi(tokens[3]));
+					if(error == Protocol::ERR_NG_DOES_NOT_EXIST) {
+						throw ServerException("The news group does not exist.");
+					} else if (error == Protocol::ERR_ART_DOES_NOT_EXIST) {
+						throw ServerException("The article does not exist.");
+					}
 				} catch (const invalid_argument& ia) {
 					throw SyntaxException("Usage: delete article <News Group ID> <Article ID>");
 				} catch (const std::out_of_range& oor) {

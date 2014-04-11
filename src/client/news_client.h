@@ -12,6 +12,7 @@ public:
 	void run();
 private:
 	Command com;
-	std::vector<std::string> executeCommand(std::string& input);
+	std::vector<std::string> executeCommand(std::vector<std::string>);
+	std::vector<std::string> showAvailableCommands();
 };
 #endif

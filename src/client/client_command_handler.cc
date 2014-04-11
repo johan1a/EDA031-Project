@@ -6,9 +6,7 @@ using namespace std;
 
 ClientCommandHandler::ClientCommandHandler(){}
 
-ClientCommandHandler::ClientCommandHandler(Connection &conn){
-	messageHandler = MessageHandler(conn);
-}
+ClientCommandHandler::ClientCommandHandler(MessageHandler& mh): messageHandler(mh) {}
 
 vector<string> ClientCommandHandler::listGroups() throw ( ConnectionClosedException){
 	messageHandler.sendCode(Protocol::COM_LIST_NG);
@@ -19,12 +17,10 @@ vector<string> ClientCommandHandler::listGroups() throw ( ConnectionClosedExcept
 
 	int nbrGroups = messageHandler.recvIntParameter();
 	checkCondition(nbrGroups >= 0, "List groups", "Number of groups < 0");
-	groupIds = vector<int>();
-	vector<string> groupNames;
+	vector<string> groupNames(nbrGroups);
 	for(int i = 0; i < nbrGroups; ++i){
-		groupIds[i] = messageHandler.recvIntParameter();
-		groupNames[i] = messageHandler.recvStringParameter();
-
+		groupNames[i] = to_string(messageHandler.recvIntParameter()) + ". ";
+		groupNames[i] = groupNames[i] + messageHandler.recvStringParameter();
 	}
 	code = messageHandler.recvCode();
 	checkCode("List groups", Protocol::ANS_END, code);
@@ -52,9 +48,8 @@ int ClientCommandHandler::createGroup(string title) throw(ConnectionClosedExcept
 	return errorCode;
 }
 
-int ClientCommandHandler::deleteGroup(int groupIndex)  throw (ConnectionClosedException,
+int ClientCommandHandler::deleteGroup(int groupId)  throw (ConnectionClosedException,
 			ProtocolViolationException ){
-	int groupId = getGroupId(groupIndex);
 
 	messageHandler.sendCode(Protocol::COM_DELETE_NG);
 	messageHandler.sendIntParameter(groupId);
@@ -76,8 +71,7 @@ int ClientCommandHandler::deleteGroup(int groupIndex)  throw (ConnectionClosedEx
 	return errorCode;
 }
 
-vector<string> ClientCommandHandler::listArticles(int groupIndex)  throw ( ConnectionClosedException){
-	int groupId = getGroupId(groupIndex);
+vector<string> ClientCommandHandler::listArticles(int groupId)  throw ( ConnectionClosedException){
 
 	messageHandler.sendCode(Protocol::COM_LIST_ART);
 	messageHandler.sendIntParameter(groupId);
@@ -97,11 +91,12 @@ vector<string> ClientCommandHandler::listArticles(int groupIndex)  throw ( Conne
 	int nbrArticles = messageHandler.recvIntParameter();
 	checkCondition(nbrArticles >= 0, "List articles",
 			"Number of groups < 0");
-	vector<int> articleIds;
-	vector<string> articleNames;
+	vector<int> articleIds(nbrArticles);
+	vector<string> articleNames(nbrArticles);
 	for (int i = 0; i < nbrArticles; i++) {
-		articleIds[i] = messageHandler.recvIntParameter();
-		articleNames[i] = messageHandler.recvStringParameter();
+		articleNames[i] = to_string(messageHandler.recvIntParameter()) + ". ";
+		articleNames[i] = articleNames[i] + messageHandler.recvStringParameter();
+
 	}
 	code = messageHandler.recvCode();
 	checkCode("List articles", Protocol::ANS_END, code);
@@ -109,9 +104,8 @@ vector<string> ClientCommandHandler::listArticles(int groupIndex)  throw ( Conne
 	return articleNames;
 }
 
-int ClientCommandHandler::createArticle(int groupIndex, string title, string author, string text) throw (ConnectionClosedException,
+int ClientCommandHandler::createArticle(int groupId, string title, string author, string text) throw (ConnectionClosedException,
 			ProtocolViolationException){
-	int groupId = getGroupId(groupIndex);
 	messageHandler.sendCode(Protocol::COM_CREATE_ART);
 	messageHandler.sendIntParameter(groupId);
 	messageHandler.sendStringParameter(title);
@@ -134,9 +128,7 @@ int ClientCommandHandler::createArticle(int groupIndex, string title, string aut
 	return errorCode;
 }
 
-int ClientCommandHandler::deleteArticle(int groupIndex, int articleIndex) throw (ConnectionClosedException){
-		int groupId = getGroupId(groupIndex);
-		int articleId = getArticleId(articleIndex);
+int ClientCommandHandler::deleteArticle(int groupId, int articleId) throw (ConnectionClosedException){
 
 		messageHandler.sendCode(Protocol::COM_DELETE_ART);
 		messageHandler.sendIntParameter(groupId);
@@ -159,9 +151,7 @@ int ClientCommandHandler::deleteArticle(int groupIndex, int articleIndex) throw 
 		return errorCode;
 }
 
-vector<string> ClientCommandHandler::getArticle(int groupIndex, int articleIndex) throw (ConnectionClosedException){
-	int groupId = getGroupId(groupIndex);
-	int articleId = getArticleId(articleIndex);
+vector<string> ClientCommandHandler::getArticle(int groupId, int articleId) throw (ConnectionClosedException){
 	
 	messageHandler.sendCode(Protocol::COM_GET_ART);
 	messageHandler.sendIntParameter(groupId);
@@ -177,27 +167,18 @@ vector<string> ClientCommandHandler::getArticle(int groupIndex, int articleIndex
 		checkCondition(code == Protocol::ANS_NAK, "Create group",
 				"Did not receive ANS_ACK or ANS_NAK");
 		result = vector<string>();
-//		result.push_back(static_cast<string>(messageHandler.recvCode()));
-		result.push_back("");//TODO!!!!!
+		result.push_back(to_string(messageHandler.recvCode()));
+
 	} else {
 		result = vector<string>();
-		result.push_back(messageHandler.recvStringParameter());
-		result.push_back(messageHandler.recvStringParameter());
-		result.push_back(messageHandler.recvStringParameter());
+		result.push_back("Title: " + messageHandler.recvStringParameter());
+		result.push_back("Author: " + messageHandler.recvStringParameter());
+		result.push_back("Text: " + messageHandler.recvStringParameter());
 	}
 	code = messageHandler.recvCode();
 	checkCode("Delete article", Protocol::ANS_END, code);
 	
 	return result;
-}
-int ClientCommandHandler::getGroupId(unsigned int groupIndex){
-	return (groupIndex < groupIds.size()) ? groupIds[groupIndex]
-				: NE_GROUP_ID;
-}
-
-int ClientCommandHandler::getArticleId(unsigned int articleIndex){
-	return (articleIndex < articleIds.size()) ? articleIds[articleIndex]
-			: NE_ART_ID;
 }
 
 void ClientCommandHandler::checkCode(string method, int expectedCode, int code) throw(ProtocolViolationException){
