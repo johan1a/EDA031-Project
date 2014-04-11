@@ -1,6 +1,6 @@
 EDA031-Project
 ==============
-
+ 
 Hemliga kommandon:
 
 g++ -o news_server_swag_edition src/server/server_main_swag_edition.cc src/server/server_command_handler.cc src/server/main_database.cc src/common/server.cc src/common/message_handler.cc src/common/connection.cc -std=c++11
