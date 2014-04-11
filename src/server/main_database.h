@@ -16,14 +16,17 @@ public:
 	Article readArticle(int groupID, int articleID) const override;
 	void writeArticle(int groupID, Article&) override;
 private:
+	int freeArticleID;
+	int freeGroupID;
 	const std::string databaseRootPath = "./database/";
+	const std::string IDFILE = "./database/FREE_IDS";
 	const std::string GROUP_NAME_FILE = "/GROUP_NAME";
-	std::string findFreeArticlePath(int groupID) const;
-	std::string findFreeGroupPath() const;
+	void loadFreeIDS();
+	void saveFreeIDS();
 	std::string getGroupName(int groupID) const;
 	bool groupExists(int groupID) const;
 	bool groupExists(const std::string& groupName) const;
-	void initDatabase() const;
+	void initDatabase();
 	Article makeArticle(int groupID, int articleID) const;
 	NewsGroup makeGroup(int groupID) const;
 	DIR* openGroupDir(int groupID) const;
