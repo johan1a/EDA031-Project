@@ -41,7 +41,7 @@ void MainDatabase::deleteNewsGroup(int groupID){
 	DIR *groupDir = opendir(groupPath.c_str());
 	if(groupDir != nullptr){
 		struct dirent *dirEnt = nullptr;
-		while (dirEnt = readdir (groupDir)){
+		while ((dirEnt = readdir (groupDir))){
 			string entryName(dirEnt->d_name);
 			if(entryName != ".." && entryName != "."){
 				string entryPath(groupPath + "/" + entryName);
@@ -61,7 +61,7 @@ vector<Article> MainDatabase::listArticlesFor(int groupID) const{
 	DIR *groupDir = openGroupDir(groupID);
 	if(groupDir != nullptr){
 		struct dirent *dirEnt;
-		while (dirEnt = readdir (groupDir)){
+		while ((dirEnt = readdir (groupDir))){
 			string entryName(dirEnt->d_name);
 			if(entryName != "." && entryName != ".." && entryName != "GROUP_NAME"){
 				articles.push_back(makeArticle(groupID, stoi(entryName)));
@@ -156,7 +156,7 @@ bool MainDatabase::groupExists(int groupID) const{
 bool MainDatabase::groupExists(const string& groupName) const{
 	DIR* root = opendir(databaseRootPath.c_str());
 	struct dirent* group;
-	while(group = readdir(root)){
+	while((group = readdir(root))){
 		string groupID(group->d_name);
 		if(groupID != ".." && groupID != "."){
 			string otherGroupName = getGroupName(stoi(groupID));
