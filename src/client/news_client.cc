@@ -1,4 +1,4 @@
-#include "client.h"
+#include "news_client.h"
 #include <iostream>
 #include <algorithm>
 #include <sstream>
@@ -27,13 +27,13 @@ int main(int argc, char* argv[]) {
 	}
 	ClientCommandHandler cmdH(conn);
 	Command cmd(cmdH);
-	Client client(cmd);
+	NewsClient client(cmd);
 	client.run();
 }
 
-Client::Client(Command& cmd) : com(cmd) {}
+NewsClient::NewsClient(Command& cmd) : com(cmd) {}
 
-void Client::run(){
+void NewsClient::run(){
 	string input;
 	vector<string> output;
 	while (input != "exit"){
@@ -48,7 +48,7 @@ void Client::run(){
 	}
 }
 
-vector<string> Client::executeCommand(string& input){
+vector<string> NewsClient::executeCommand(string& input){
 	vector<string> tokens;
 	istringstream iss(input);
 

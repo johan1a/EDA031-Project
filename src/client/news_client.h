@@ -1,14 +1,14 @@
-#ifndef CLIENT_H
-#define CLIENT_H
+#ifndef NEWS_CLIENT_H
+#define NEWS_CLIENT_H
 
 #include "client_command_handler.h"
 #include <vector>
 #include <string>
 #include "command.h"
 
-class Client{
+class NewsClient{
 public:
-	Client(Command&);
+	NewsClient(Command&);
 	void run();
 private:
 	Command com;
