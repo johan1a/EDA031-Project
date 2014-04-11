@@ -4,13 +4,14 @@
 #include "client_command_handler.h"
 #include <vector>
 #include <string>
+#include "command.h"
 
 class Client{
 public:
-	Client();
+	Client(Command&);
 	void run();
 private:
-	ClientCommandHandler cmdHandler;
+	Command com;
 	std::vector<std::string> executeCommand(std::string& input);
 };
 #endif

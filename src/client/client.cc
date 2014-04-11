@@ -4,38 +4,47 @@
 #include <sstream>
 #include <iterator>
 #include "command.h"
+#include "client_command_handler.h"
 #include "syntax_exception.h"
 using namespace std;
 
-int main(){
-	Client client;
+int main(int argc, char* argv[]) {
+	if (argc != 3) {
+		cerr << "Usage: " << argv[0] << " host-name port-number" << endl;
+		exit(1);
+	}
+	int port = -1;
+	try {
+		port = stoi(argv[2]);
+	} catch (exception& e) {
+		cerr << "Wrong port number. " << e.what() << endl;
+		exit(1);
+	}
+		Connection conn(argv[1], port);
+	if (!conn.isConnected()) {
+		cerr << "Connection attempt failed" << endl;
+		exit(1);
+	}
+	ClientCommandHandler cmdH(conn);
+	Command cmd(cmdH);
+	Client client(cmd);
 	client.run();
-} 
+}
 
-Client::Client(){}
+Client::Client(Command& cmd) : com(cmd) {}
 
 void Client::run(){
-	bool isConnected = true;
-	string host, port;
-
-	cout << "Enter host name: " << endl;
-	cin >> host;
-
-	cout << "Enter port nbr: "<< endl;
-	cin >> port;
-
-	Connection conn(host.c_str(), stoi(port)); //TODO fult med c_str()
-	ClientCommandHandler cmdHandler(conn);
-
 	string input;
 	vector<string> output;
-	while (isConnected){
-		cin >> input;
-
-		output = executeCommand(input);
-		for_each(output.begin(), output.end(), [](string &s){ cout << s << endl; });
-
-		isConnected = false; //TODO fixa kommando för att stänga av programmet perhaps
+	while (input != "exit"){
+		try {
+			cin >> input;
+			output = executeCommand(input);
+			for_each(output.begin(), output.end(), [](string &s){ cout << s << endl; });
+		} catch (ConnectionClosedException&) {
+			cout << " no reply from server. Exiting." << endl;
+			exit(1);
+		}
 	}
 }
 
@@ -46,24 +55,23 @@ vector<string> Client::executeCommand(string& input){
 	/* lägger in alla ord från input i tokens */
 	copy(istream_iterator<string>(iss), istream_iterator<string>(),
        back_inserter<vector<string> >(tokens));
-	
-	Command c(cmdHandler);
+
 	if(tokens.size() != 0){
 		try{
 			vector<string> success;
 			if(tokens[0] == "list"){
-				return c.list(tokens);
+				return com.list(tokens);
 
 			}else if (tokens[0] == "read"){
-				return c.read(tokens);
+				return com.read(tokens);
 
 			}else if(tokens[0] == "create"){
-				c.create(tokens);
+				com.create(tokens);
 				success.push_back("The creation was successful");
 				return success;
 
 			}else if(tokens[0] == "delete"){
-				c.del(tokens);
+				com.del(tokens);
 				success.push_back("The deletion was successful");
 				return success;
 			}

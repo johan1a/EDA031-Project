@@ -7,6 +7,7 @@
 
 class Command{
 	public:
+		Command();
 		Command(ClientCommandHandler&);
 		std::vector<std::string> list(std::vector<std::string>&);
 		std::vector<std::string> read(std::vector<std::string>&);

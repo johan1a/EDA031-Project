@@ -9,22 +9,44 @@
 
 using namespace std;
 
+Command::Command() {}
+
 Command::Command(ClientCommandHandler& cch) : cmdHandler(cch) {}
 
 vector<string> Command::list(vector<string>& tokens) {
 	vector<string> result;
 	if(tokens.size() == 1){
 		result = cmdHandler.listGroups();
-	}else {
-		int groupIndex = stoi(tokens[1]);
-		result = cmdHandler.listArticles(groupIndex);
+	}else if (tokens.size() == 2) {
+		try {
+			int groupIndex = stoi(tokens[1]);
+			result = cmdHandler.listArticles(groupIndex);
+		} catch (const invalid_argument& ia) {
+			throw SyntaxException("Usage: [list | list <News Group ID>]");
+		} catch (const std::out_of_range& oor) {
+			throw SyntaxException("Usage: [list | list <News Group ID>]");
+		}
+	} else {
+		throw SyntaxException("Usage: [list | list <News Group ID>]");
 	}
 	return result;
 }
 
 vector<string> Command::read(vector<string>& tokens) {
-	int groupIndex = stoi(tokens[1]);
-	int articleIndex = stoi(tokens[2]);
+	int groupIndex = -1;
+	int articleIndex = -1;
+	if (tokens.size() == 3) {
+		try {
+			groupIndex = stoi(tokens[1]);
+			articleIndex = stoi(tokens[2]);
+		} catch (const invalid_argument& ia) {
+			throw SyntaxException("Usage: read <News Group ID> <Article ID>");
+		} catch (const std::out_of_range& oor) {
+			throw SyntaxException("Usage: read <News Group ID> <Article ID>");
+		}
+	} else {
+		throw SyntaxException("Usage: read <News Group ID> <Article ID>");
+	}
 	return cmdHandler.getArticle(groupIndex,articleIndex);
 }
 
