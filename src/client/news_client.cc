@@ -41,7 +41,8 @@ void NewsClient::run(){
 	string input;
 	vector<string> output;
 	vector<string> tokens;
-	while (tokens.size() != 1 || tokens[0] != "exit"){
+	bool closeRequested = false;
+	while (!closeRequested){
 		try {
 			tokens.clear();
 			string tmp;
@@ -51,9 +52,12 @@ void NewsClient::run(){
 			istream_iterator<string> begin(ss);
 			istream_iterator<string> end;
 			vector<string> tokens(begin, end);
-			
-			output = executeCommand(tokens);
-			for_each(output.begin(), output.end(), [](string &s){ cout << s << endl; });
+			if(tokens.size() == 1 && tokens[0] == "exit") {
+				closeRequested = true;
+			} else {
+				output = executeCommand(tokens);
+				for_each(output.begin(), output.end(), [](string &s){ cout << s << endl; });
+			}
 		} catch (ConnectionClosedException&) {
 			cout << " no reply from server. Exiting." << endl;
 			exit(1);

@@ -14,7 +14,7 @@ using namespace std;
 
 int main(int argc, char* argv[]){
 	if (argc != 2) {
-		cerr << "Usage: myserver port-number" << endl;
+		cerr << "Usage: "<< argv[0] <<" port-number" << endl;
 		exit(1);
 	}
 	int port = -1;

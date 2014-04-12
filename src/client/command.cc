@@ -18,10 +18,16 @@ vector<string> Command::list(vector<string>& tokens) {
 	vector<string> result;
 	if(tokens.size() == 1){
 		result = cmdHandler.listGroups();
+		if (result.size() == 0) {
+			throw ServerException("No news groups found.");
+		}
 	}else if (tokens.size() == 2) {
 		try {
 			int groupIndex = stoi(tokens[1]);
 			result = cmdHandler.listArticles(groupIndex);
+			if (result.size() == 0) {
+				throw ServerException("No articles found.");
+			}
 		} catch (const invalid_argument& ia) {
 			throw SyntaxException("Usage: [list | list <News Group ID>]");
 		} catch (const std::out_of_range& oor) {
@@ -80,7 +86,7 @@ void Command::create(vector<string>& tokens) {
 			getline(cin, author);
 			string temp;
 			string end = "done";
-			cout << "Enter text: " << endl;
+			cout << "Enter text (finish with line \"done\"): " << endl;
 			while(temp != end) {
 				getline(cin, temp);
 				text = text + temp + '\n';

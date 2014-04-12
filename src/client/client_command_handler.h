@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include "../common/message_handler.h"
-#include "../common/connection.h"
 #include "../common/connection_closed_exception.h"
 #include "../common/protocol_violation_exception.h"
 
