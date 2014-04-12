@@ -33,6 +33,10 @@ src/server/news_server_cache_storage: src/server/news_server_cache_storage.o src
 # Standard clean
 clean:
 	rm -f *.o $(PROGS)
+	rm -f src/client/*.o
+	rm -f src/server/*.o
+	rm -f src/common/*.o
+	rm -f src/common/exception/*.o
 	rm -f *.d
 	rm news_client
 	rm news_server_cache_storage
