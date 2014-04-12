@@ -4,11 +4,11 @@
 #include <vector>
 #include <sstream>
 #include <iterator>
-#include "command.h"
+#include "user_input_handler.h"
 #include "../common/message_handler.h"
 #include "client_command_handler.h"
-#include "syntax_exception.h"
-#include "server_exception.h"
+#include "../common/exception/syntax_exception.h"
+#include "../common/exception/server_exception.h"
 using namespace std;
 
 int main(int argc, char* argv[]) {
@@ -30,18 +30,28 @@ int main(int argc, char* argv[]) {
 	}
 	MessageHandler mh(conn);
 	ClientCommandHandler cmdH(mh);
-	Command cmd(cmdH);
-	NewsClient client(cmd);
+	UserInputHandler uih(cmdH);
+	NewsClient client(uih);
 	client.run();
 }
 
-NewsClient::NewsClient(Command& cmd) : com(cmd) {}
+NewsClient::NewsClient(UserInputHandler& h) : handler(h) {
+	availableCommands += "Available commands: \n";
+	availableCommands += "list\n";
+	availableCommands += "list <newsgroup ID>\n";
+	availableCommands += "read <newsgroup ID> <article ID>\n";
+	availableCommands += "create group\n";
+	availableCommands += "create article <newsgroup ID>\n";
+	availableCommands += "delete group <newsgroup ID>\n";
+	availableCommands += "delete article <newsgroup ID> <article ID>\n";
+}
 
 void NewsClient::run(){
 	string input;
 	vector<string> output;
 	vector<string> tokens;
 	bool closeRequested = false;
+	cout << "Welcome!" << endl;
 	while (!closeRequested){
 		try {
 			tokens.clear();
@@ -70,17 +80,17 @@ vector<string> NewsClient::executeCommand(vector<string> tokens){
 	if(tokens.size() != 0){
 		try{
 			if(tokens[0] == "list"){
-				output = com.list(tokens);
+				output = handler.list(tokens);
 			}else if (tokens[0] == "read"){
-				output = com.read(tokens);
+				output = handler.read(tokens);
 			}else if(tokens[0] == "create"){
-				com.create(tokens);
+				handler.create(tokens);
 				output.push_back("The creation was successful");
 			}else if(tokens[0] == "delete"){
-				com.del(tokens);
+				handler.del(tokens);
 				output.push_back("The deletion was successful");
 			}else{
-				output = showAvailableCommands();
+				output.push_back(availableCommands);
 			}
 		} catch(const SyntaxException& se) {
 			output.push_back(se.msg);		
@@ -88,21 +98,7 @@ vector<string> NewsClient::executeCommand(vector<string> tokens){
 			output.push_back(serverE.msg);		
 		}
 	} else{
-		output = showAvailableCommands();
+		output.push_back(availableCommands);
 	}
 	return output;
 }
-
-vector<string> NewsClient::showAvailableCommands(){
-	vector<string> res;
-	res.push_back("Available commands: ");
-	res.push_back("list");
-	res.push_back("list <newsgroup ID>");
-	res.push_back("read <newsgroup ID> <article ID>");
-	res.push_back("create group");
-	res.push_back("create article <newsgroup ID>");
-	res.push_back("delete group <newsgroup ID>");
-	res.push_back("delete article <newsgroup ID> <article ID>");
-	return res;
-}
-

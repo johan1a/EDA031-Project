@@ -1,7 +1,7 @@
 #include "client_command_handler.h"
 #include "../common/protocol.h"
 #include <string>
-#include "server_exception.h"
+#include "../common/exception/server_exception.h"
 
 using namespace std;
 

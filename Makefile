@@ -23,7 +23,7 @@ PROGS = src/client/news_client  src/server/news_server_file_storage src/server/n
 all: $(PROGS)
 
 # Targets rely on implicit rules for compiling and linking
-src/client/news_client: src/client/news_client.o src/client/client_command_handler.o src/common/message_handler.o src/common/connection.o src/client/command.o
+src/client/news_client: src/client/news_client.o src/client/client_command_handler.o src/common/message_handler.o src/common/connection.o src/client/user_input_handler.o
 src/server/news_server_file_storage: src/server/news_server_file_storage.o src/server/server_command_handler.o src/server/main_database.o src/common/server.o src/common/message_handler.o src/common/connection.o
 src/server/news_server_cache_storage: src/server/news_server_cache_storage.o src/server/server_command_handler.o src/server/cache_database.o src/common/server.o src/common/message_handler.o src/common/connection.o
 

@@ -1,8 +1,8 @@
 #include "cache_database.h"
 #include <map>
-#include "news_group_already_exists_exception.h"
-#include "news_group_does_not_exist_exception.h"
-#include "article_does_not_exist_exception.h"
+#include "../common/exception/news_group_already_exists_exception.h"
+#include "../common/exception/news_group_does_not_exist_exception.h"
+#include "../common/exception/article_does_not_exist_exception.h"
 #include <iostream>
 #include <algorithm>
 

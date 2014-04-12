@@ -4,15 +4,15 @@
 #include "client_command_handler.h"
 #include <vector>
 #include <string>
-#include "command.h"
+#include "user_input_handler.h"
 
 class NewsClient{
 public:
-	NewsClient(Command&);
+	NewsClient(UserInputHandler&);
 	void run();
 private:
-	Command com;
+	std::string availableCommands;
+	UserInputHandler handler;
 	std::vector<std::string> executeCommand(std::vector<std::string>);
-	std::vector<std::string> showAvailableCommands();
 };
 #endif

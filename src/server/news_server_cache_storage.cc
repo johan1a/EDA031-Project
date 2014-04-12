@@ -1,7 +1,7 @@
 #include "../common/connection.h"
 #include "../common/server.h"
-#include "../common/connection_closed_exception.h"
-#include "../common/protocol_violation_exception.h"
+#include "../common/exception/connection_closed_exception.h"
+#include "../common/exception/protocol_violation_exception.h"
 #include "cache_database.h"
 #include "server_command_handler.h"
 #include <iostream>

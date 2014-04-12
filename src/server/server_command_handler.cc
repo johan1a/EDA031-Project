@@ -1,9 +1,9 @@
 #include <string>
 #include <vector>
-#include "../common/protocol_violation_exception.h"
-#include "news_group_does_not_exist_exception.h"
-#include "news_group_already_exists_exception.h"
-#include "article_does_not_exist_exception.h"
+#include "../common/exception/protocol_violation_exception.h"
+#include "../common/exception/news_group_does_not_exist_exception.h"
+#include "../common/exception/news_group_already_exists_exception.h"
+#include "../common/exception/article_does_not_exist_exception.h"
 #include "server_command_handler.h"
 #include "../common/protocol.h"
 #include "database.h"

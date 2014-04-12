@@ -1,6 +1,6 @@
-#include "news_group_already_exists_exception.h"
-#include "news_group_does_not_exist_exception.h"
-#include "article_does_not_exist_exception.h"
+#include "../common/exception/news_group_already_exists_exception.h"
+#include "../common/exception/news_group_does_not_exist_exception.h"
+#include "../common/exception/article_does_not_exist_exception.h"
 #include "main_database.h"
 #include <iostream>
 #include <fstream>
@@ -121,7 +121,7 @@ string MainDatabase::getGroupName(int groupID) const{
 
 bool MainDatabase::groupExists(int groupID) const{
 	string groupPath(databaseRootPath + to_string(groupID));
-	return opendir(groupPath.c_str()) != nullptr;
+	return openGroupDir(groupID);
 }
 
 bool MainDatabase::groupExists(const string& groupName) const{
