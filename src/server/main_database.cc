@@ -16,8 +16,8 @@ MainDatabase::MainDatabase(){
 void MainDatabase::createNewsGroup(const string& groupName){
 	if(!groupExists(groupName)){
 		string groupPath = databaseRootPath + to_string(freeGroupID);
-		mkdir(groupPath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); // TODO mega unstrict permissions
-		ofstream nameFile(groupPath + GROUP_NAME_FILE);
+		mkdir(groupPath.c_str(), S_IRWXU | S_IROTH);
+		ofstream nameFile(groupPath + "/" + GROUP_NAME_FILE);
 		nameFile << groupName;
 		nameFile.close();
 		freeGroupID++;
@@ -65,7 +65,7 @@ vector<Article> MainDatabase::listArticlesFor(int groupID) const{
 		struct dirent *dirEnt;
 		while ((dirEnt = readdir (groupDir))){
 			string entryName(dirEnt->d_name);
-			if(entryName != "." && entryName != ".." && entryName != "GROUP_NAME"){
+			if(entryName != "." && entryName != ".." && entryName != GROUP_NAME_FILE){
 				articles.push_back(makeArticle(groupID, stoi(entryName)));
 			}
 		}
@@ -85,7 +85,7 @@ vector<NewsGroup> MainDatabase::listNewsGroups() const{
 		struct dirent *group = nullptr;
 		while ((group = readdir (databaseDir)) != nullptr){
 			string groupID(group->d_name);
-			if(groupID != "." && groupID != ".." && groupID != "FREE_IDS"){
+			if(groupID != "." && groupID != ".." && groupID != IDFILE){
 				groups.push_back(makeGroup(stoi(groupID)));
 			}
 		}
@@ -104,7 +104,6 @@ void MainDatabase::writeArticle(int groupID, Article& article) {
 		if(!groupExists(groupID)){
 			throw NewsGroupDoesNotExistException();
 		}
-
 		string groupPath = databaseRootPath + to_string(groupID) + "/";
 		string articlePath = groupPath + to_string(freeArticleID);
 		saveArticleToFile(article, articlePath);
@@ -113,7 +112,7 @@ void MainDatabase::writeArticle(int groupID, Article& article) {
 }
 
 string MainDatabase::getGroupName(int groupID) const{
-	ifstream groupStream(databaseRootPath + to_string(groupID) + GROUP_NAME_FILE);
+	ifstream groupStream(databaseRootPath + to_string(groupID) + "/" + GROUP_NAME_FILE);
 	string groupName;
 	getline(groupStream, groupName);
 	groupStream.close();
@@ -130,7 +129,7 @@ bool MainDatabase::groupExists(const string& groupName) const{
 	struct dirent* group;
 	while((group = readdir(root))){
 		string groupID(group->d_name);
-		if(groupID != ".." && groupID != "." && groupID != "FREE_IDS"){
+		if(groupID != ".." && groupID != "." && groupID != IDFILE){
 			string otherGroupName = getGroupName(stoi(groupID));
 			if(otherGroupName == groupName){
 				closedir(root);
@@ -144,10 +143,9 @@ bool MainDatabase::groupExists(const string& groupName) const{
 }
 
 void MainDatabase::initDatabase(){
-	if (opendir(databaseRootPath.c_str()) == nullptr){
+	if (!opendir(databaseRootPath.c_str())){
 		cout << "Creating root directory..." << endl;
-		mkdir(databaseRootPath.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); // TODO mega unstrict permissions
-
+		mkdir(databaseRootPath.c_str(), S_IRWXU | S_IROTH );
 		freeArticleID = 0;
 		freeGroupID = 0;
 		saveFreeIDS();
@@ -157,7 +155,7 @@ void MainDatabase::initDatabase(){
 }
 
 void MainDatabase::loadFreeIDS(){
-	ifstream idStream(IDFILE);
+	ifstream idStream(IDPATH);
 	if(idStream){
 		string id;
 		getline(idStream, id);
@@ -171,7 +169,7 @@ void MainDatabase::loadFreeIDS(){
 }
 
 void MainDatabase::saveFreeIDS(){
-		ofstream idFile(IDFILE);
+		ofstream idFile(IDPATH);
 		idFile << freeArticleID << endl;
 		idFile << freeGroupID << endl;
 		idFile.close();	
@@ -203,7 +201,7 @@ Article MainDatabase::makeArticle(int groupID, int articleID) const{
 }
 
 NewsGroup MainDatabase::makeGroup(int groupID) const{
-	ifstream groupStream(databaseRootPath + to_string(groupID) + GROUP_NAME_FILE);
+	ifstream groupStream(databaseRootPath + to_string(groupID) + "/" + GROUP_NAME_FILE);
 	string groupName;
 	getline(groupStream, groupName);
 	groupStream.close();

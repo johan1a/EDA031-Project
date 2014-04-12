@@ -19,8 +19,9 @@ private:
 	int freeArticleID;
 	int freeGroupID;
 	const std::string databaseRootPath = "./database/";
-	const std::string IDFILE = "./database/FREE_IDS";
-	const std::string GROUP_NAME_FILE = "/GROUP_NAME";
+	const std::string IDFILE = "FREE_IDS";
+	const std::string IDPATH = "./database/" + IDFILE;
+	const std::string GROUP_NAME_FILE = "GROUP_NAME";
 	void loadFreeIDS();
 	void saveFreeIDS();
 	std::string getGroupName(int groupID) const;
