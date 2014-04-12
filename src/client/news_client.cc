@@ -8,7 +8,8 @@
 #include "../common/message_handler.h"
 #include "client_command_handler.h"
 #include "../common/exception/syntax_exception.h"
-#include "../common/exception/server_exception.h"
+#include "../common/exception/news_group_does_not_exist_exception.h"
+#include "../common/exception/article_does_not_exist_exception.h"
 using namespace std;
 
 int main(int argc, char* argv[]) {
@@ -92,10 +93,12 @@ vector<string> NewsClient::executeCommand(vector<string> tokens){
 			}else{
 				output.push_back(availableCommands);
 			}
-		} catch(const SyntaxException& se) {
-			output.push_back(se.msg);		
-		} catch(const ServerException& serverE) {
-			output.push_back(serverE.msg);		
+		} catch(const SyntaxException& e) {
+			output.push_back(e.msg);		
+		} catch(const NewsGroupDoesNotExistException& e) {
+			output.push_back(e.msg);		
+		} catch(const ArticleDoesNotExistException& e) {
+			output.push_back(e.msg);		
 		}
 	} else{
 		output.push_back(availableCommands);

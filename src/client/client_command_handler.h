@@ -6,7 +6,8 @@
 #include "../common/message_handler.h"
 #include "../common/exception/connection_closed_exception.h"
 #include "../common/exception/protocol_violation_exception.h"
-#include "../common/exception/server_exception.h"
+#include "../common/exception/article_does_not_exist_exception.h"
+#include "../common/exception/news_group_does_not_exist_exception.h"
 
 class ClientCommandHandler{
 public:
@@ -16,7 +17,7 @@ public:
 	int createGroup(std::string title) throw(ConnectionClosedException);
 	int deleteGroup(int groupIndex) throw (ConnectionClosedException,
 			ProtocolViolationException );
-	std::vector<std::string> listArticles(int groupIndex) throw ( ConnectionClosedException, ServerException);
+	std::vector<std::string> listArticles(int groupIndex) throw (ConnectionClosedException, NewsGroupDoesNotExistException, ArticleDoesNotExistException);
 	int createArticle(int groupIndex, std::string title, std::string author, std::string text) throw (ConnectionClosedException,
 			ProtocolViolationException);
 	int deleteArticle(int groupIndex, int articleIndex) throw (ConnectionClosedException);

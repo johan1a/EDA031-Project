@@ -1,8 +1,5 @@
 #include "client_command_handler.h"
 #include "../common/protocol.h"
-#include <string>
-#include "../common/exception/server_exception.h"
-
 using namespace std;
 
 ClientCommandHandler::ClientCommandHandler(){}
@@ -72,8 +69,7 @@ int ClientCommandHandler::deleteGroup(int groupId)  throw (ConnectionClosedExcep
 	return errorCode;
 }
 
-vector<string> ClientCommandHandler::listArticles(int groupId) throw (ConnectionClosedException, ServerException){
-
+vector<string> ClientCommandHandler::listArticles(int groupId) throw (ConnectionClosedException, NewsGroupDoesNotExistException, ArticleDoesNotExistException){
 	messageHandler.sendCode(Protocol::COM_LIST_ART);
 	messageHandler.sendIntParameter(groupId);
 	messageHandler.sendCode(Protocol::COM_END);
@@ -87,9 +83,9 @@ vector<string> ClientCommandHandler::listArticles(int groupId) throw (Connection
 		code = messageHandler.recvCode(); // error code
 		messageHandler.recvCode(); // hopefully ANS_NAK, not checked
 		if (code == Protocol::ERR_NG_DOES_NOT_EXIST) {
-			throw ServerException("The newsgroup does not exist.");
+			throw NewsGroupDoesNotExistException();
 		} else {
-			throw ServerException("The article does not exist.");
+			throw ArticleDoesNotExistException();
 		}
 		return vector<string>();
 	}
