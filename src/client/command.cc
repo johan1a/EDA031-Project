@@ -5,6 +5,10 @@
 #include <iterator>
 #include "command.h"
 #include "syntax_exception.h"
+#include "delete_syntax_exception.h"
+#include "list_syntax_exception.h"
+#include "create_syntax_exception.h"
+#include "read_syntax_exception.h"
 #include "server_exception.h"
 #include "../common/protocol.h"
 
@@ -19,7 +23,7 @@ vector<string> Command::list(vector<string>& tokens) {
 	if(tokens.size() == 1){
 		result = cmdHandler.listGroups();
 		if (result.size() == 0) {
-			throw ServerException("No newsgroups found.");
+			throw ServerException("No news groups found.");
 		}
 	}else if (tokens.size() == 2) {
 		try {
@@ -29,12 +33,12 @@ vector<string> Command::list(vector<string>& tokens) {
 				throw ServerException("No articles found.");
 			}
 		} catch (const invalid_argument& ia) {
-			throw SyntaxException("Usage: [list | list <newsgroup ID>]");
+			throw ListSyntaxException();
 		} catch (const std::out_of_range& oor) {
-			throw SyntaxException("Usage: [list | list <newsgroup ID>]");
+			throw ListSyntaxException();
 		}
 	} else {
-		throw SyntaxException("Usage: [list | list <newsgroup ID>]");
+		throw ListSyntaxException();
 	}
 	return result;
 }
@@ -47,14 +51,19 @@ vector<string> Command::read(vector<string>& tokens) {
 			groupIndex = stoi(tokens[1]);
 			articleIndex = stoi(tokens[2]);
 		} catch (const invalid_argument& ia) {
-			throw SyntaxException("Usage: read <newsgroup ID> <article ID>");
+			throw ReadSyntaxException();
 		} catch (const std::out_of_range& oor) {
-			throw SyntaxException("Usage: read <newsgroup ID> <article ID>");
+			throw ReadSyntaxException();
 		}
 	} else {
-		throw SyntaxException("Usage: read <newsgroup ID> <article ID>");
+		throw ReadSyntaxException();
 	}
-	return cmdHandler.getArticle(groupIndex,articleIndex);
+	vector<string> output = cmdHandler.getArticle(groupIndex,articleIndex);
+	if(output.size() > 0 && output[0] == to_string(Protocol::ERR_ART_DOES_NOT_EXIST)){
+		throw ServerException("The article does not exist.");
+	}
+
+	return output;
 }
 
 void Command::create(vector<string>& tokens) {
@@ -69,81 +78,61 @@ void Command::create(vector<string>& tokens) {
 		} else if (tokens[1] == "article") {
 			string title, author, text;
 			int index;
-			string ind;
+			string indata;
 			cout << "Enter group index: " << endl;
-			//cin >> index;
-			getline(cin, ind);
+			getline(cin, indata);
 			try{
-				index=stoi(ind);
+				index=stoi(indata);
 			} catch (const invalid_argument& ia) {
-				throw SyntaxException("Expected a newsgroup ID");
+				throw CreateSyntaxException();
 			} catch (const std::out_of_range& oor) {
-				throw SyntaxException("Expected a newsgroup ID");
+				throw CreateSyntaxException();
 			}
 			cout << "Enter article title: " << endl;
 			getline(cin, title);
 			cout << "Enter author: " << endl;
 			getline(cin, author);
-			string temp;
-			string end = "done";
-			cout << "Enter text (finish with line \"done\"): " << endl;
-			while(temp != end) {
-				getline(cin, temp);
-				text = text + temp + '\n';
-			}
-			text = text.substr(0, text.length() - end.length() - 1);
 			
+			string endDelim = "done";
+			cout << "Enter text (finish with line \"" + endDelim + "\"): " << endl;
+
+			string temp;
+			while(temp != endDelim) {
+				getline(cin, temp);
+				text += temp + '\n';
+			}
+			text = text.substr(0, text.length() - endDelim.length() - 1);
 			returnCode = cmdHandler.createArticle(index, title, author, text);
 		} else {
-			throw SyntaxException("Usage: create [group | article]");
+			throw CreateSyntaxException();
 		}
 	} else {
-		throw SyntaxException("Usage: create [group | article]");
+		throw CreateSyntaxException();
 	}
-	if (returnCode == 0) {
-		
-	} else if (returnCode == Protocol::ERR_NG_DOES_NOT_EXIST) {
-		throw ServerException("The newsgroup does not exist.");
+	if (returnCode == Protocol::ERR_NG_DOES_NOT_EXIST) {
+		throw ServerException("The news group does not exist.");
 	}
 }
 
 void Command::del(vector<string>& tokens) {
-	if (tokens.size() >= 2) {
-		if (tokens[1] == "group") {
-			if (tokens.size() == 3) {
-				try {
-					if(cmdHandler.deleteGroup(stoi(tokens[2])) != 0) {
-						throw ServerException("The newsgroup does not exist.");
-					}
-				} catch (const invalid_argument& ia) {
-					throw SyntaxException("Usage: delete group <newsgroup ID>");
-				} catch (const std::out_of_range& oor) {
-					throw SyntaxException("Usage: delete group <newsgroup ID>");
-				}
-			} else {
-				throw SyntaxException("Usage: delete group <newsgroup ID>");
-			}
-		} else if (tokens[1] == "article") {
-			if (tokens.size() == 4) {
-				try {
-					int error = cmdHandler.deleteArticle(stoi(tokens[2]), stoi(tokens[3]));
-					if(error == Protocol::ERR_NG_DOES_NOT_EXIST) {
-						throw ServerException("The newsgroup does not exist.");
-					} else if (error == Protocol::ERR_ART_DOES_NOT_EXIST) {
-						throw ServerException("The article does not exist.");
-					}
-				} catch (const invalid_argument& ia) {
-					throw SyntaxException("Usage: delete article <newsgroup ID> <article ID>");
-				} catch (const std::out_of_range& oor) {
-					throw SyntaxException("Usage: delete article <newsgroup ID> <article ID>");
-				}
-			} else {
-				throw SyntaxException("Usage: delete article <newsgroup ID> <article ID>");
-			}
-		} else {
-			throw SyntaxException("Usage: delete [group <newsgroup ID> | article <newsgroup ID> <article ID>]");
+	int errorCode = 0;
+	try {
+		if(tokens.size() == 3 && tokens[1] == "group"){
+			errorCode = cmdHandler.deleteGroup(stoi(tokens[2]));
+		}else if (tokens.size() == 4 && tokens[1] == "article"){
+			errorCode = cmdHandler.deleteArticle(stoi(tokens[2]), stoi(tokens[3]));
+		}else{
+			throw DeleteSyntaxException();
+		}	
+
+		if(errorCode == Protocol::ERR_NG_DOES_NOT_EXIST){
+			throw ServerException("The news group does not exist.");
+		}else if(errorCode == Protocol::ERR_ART_DOES_NOT_EXIST){
+			throw ServerException("The article does not exist.");
 		}
-	} else {
-		throw SyntaxException("Usage: delete [group <newsgroup ID> | article <newsgroup ID> <article ID>]");
+	} catch (const invalid_argument& ia) {
+		throw DeleteSyntaxException();
+	} catch (const std::out_of_range& oor) {
+		throw DeleteSyntaxException();
 	}
 }

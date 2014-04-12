@@ -1,13 +1,10 @@
-#include <string>
-
 #ifndef SYNTAX_EXCEPTION_H
 #define SYNTAX_EXCEPTION_H
+#include <string>
 
-
-struct SyntaxException {
+class SyntaxException{
+public:
 	std::string msg;
-
-	SyntaxException(std::string m):
-		msg(m) {}
+	SyntaxException() = default;
 };
 #endif
