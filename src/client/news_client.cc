@@ -66,52 +66,43 @@ void NewsClient::run(){
 }
 
 vector<string> NewsClient::executeCommand(vector<string> tokens){
-
+	vector<string> output;
 	if(tokens.size() != 0){
 		try{
-			vector<string> success;
 			if(tokens[0] == "list"){
-				return com.list(tokens);
-
+				output = com.list(tokens);
 			}else if (tokens[0] == "read"){
-				return com.read(tokens);
-
+				output = com.read(tokens);
 			}else if(tokens[0] == "create"){
 				com.create(tokens);
-				success.push_back("The creation was successful");
-				return success;
-
+				output.push_back("The creation was successful");
 			}else if(tokens[0] == "delete"){
 				com.del(tokens);
-				success.push_back("The deletion was successful");
-				return success;
+				output.push_back("The deletion was successful");
 			}else{
-				return showAvailableCommands();
+				output = showAvailableCommands();
 			}
 		} catch(const SyntaxException& se) {
-			vector<string> res;
-			res.push_back(se.msg);		
-			return res;
+			output.push_back(se.msg);		
 		} catch(const ServerException& serverE) {
-			vector<string> res2;
-			res2.push_back(serverE.msg);		
-			return res2;
+			output.push_back(serverE.msg);		
 		}
 	} else{
-		return showAvailableCommands();
+		output = showAvailableCommands();
 	}
+	return output;
 }
 
 vector<string> NewsClient::showAvailableCommands(){
 	vector<string> res;
 	res.push_back("Available commands: ");
 	res.push_back("list");
-	res.push_back("list <News Group ID>");
-	res.push_back("read <News Group ID> <Article ID>");
+	res.push_back("list <newsgroup ID>");
+	res.push_back("read <newsgroup ID> <article ID>");
 	res.push_back("create group");
-	res.push_back("create article <News Group ID>");
-	res.push_back("delete group <News Group ID>");
-	res.push_back("delete article <News Group ID> <Article ID>");
+	res.push_back("create article <newsgroup ID>");
+	res.push_back("delete group <newsgroup ID>");
+	res.push_back("delete article <newsgroup ID> <article ID>");
 	return res;
 }
 

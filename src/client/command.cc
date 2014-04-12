@@ -19,7 +19,7 @@ vector<string> Command::list(vector<string>& tokens) {
 	if(tokens.size() == 1){
 		result = cmdHandler.listGroups();
 		if (result.size() == 0) {
-			throw ServerException("No news groups found.");
+			throw ServerException("No newsgroups found.");
 		}
 	}else if (tokens.size() == 2) {
 		try {
@@ -29,12 +29,12 @@ vector<string> Command::list(vector<string>& tokens) {
 				throw ServerException("No articles found.");
 			}
 		} catch (const invalid_argument& ia) {
-			throw SyntaxException("Usage: [list | list <News Group ID>]");
+			throw SyntaxException("Usage: [list | list <newsgroup ID>]");
 		} catch (const std::out_of_range& oor) {
-			throw SyntaxException("Usage: [list | list <News Group ID>]");
+			throw SyntaxException("Usage: [list | list <newsgroup ID>]");
 		}
 	} else {
-		throw SyntaxException("Usage: [list | list <News Group ID>]");
+		throw SyntaxException("Usage: [list | list <newsgroup ID>]");
 	}
 	return result;
 }
@@ -47,12 +47,12 @@ vector<string> Command::read(vector<string>& tokens) {
 			groupIndex = stoi(tokens[1]);
 			articleIndex = stoi(tokens[2]);
 		} catch (const invalid_argument& ia) {
-			throw SyntaxException("Usage: read <News Group ID> <Article ID>");
+			throw SyntaxException("Usage: read <newsgroup ID> <article ID>");
 		} catch (const std::out_of_range& oor) {
-			throw SyntaxException("Usage: read <News Group ID> <Article ID>");
+			throw SyntaxException("Usage: read <newsgroup ID> <article ID>");
 		}
 	} else {
-		throw SyntaxException("Usage: read <News Group ID> <Article ID>");
+		throw SyntaxException("Usage: read <newsgroup ID> <article ID>");
 	}
 	return cmdHandler.getArticle(groupIndex,articleIndex);
 }
@@ -76,9 +76,9 @@ void Command::create(vector<string>& tokens) {
 			try{
 				index=stoi(ind);
 			} catch (const invalid_argument& ia) {
-				throw SyntaxException("Expected a News Group ID");
+				throw SyntaxException("Expected a newsgroup ID");
 			} catch (const std::out_of_range& oor) {
-				throw SyntaxException("Expected a News Group ID");
+				throw SyntaxException("Expected a newsgroup ID");
 			}
 			cout << "Enter article title: " << endl;
 			getline(cin, title);
@@ -103,7 +103,7 @@ void Command::create(vector<string>& tokens) {
 	if (returnCode == 0) {
 		
 	} else if (returnCode == Protocol::ERR_NG_DOES_NOT_EXIST) {
-		throw ServerException("The news group does not exist.");
+		throw ServerException("The newsgroup does not exist.");
 	}
 }
 
@@ -113,37 +113,37 @@ void Command::del(vector<string>& tokens) {
 			if (tokens.size() == 3) {
 				try {
 					if(cmdHandler.deleteGroup(stoi(tokens[2])) != 0) {
-						throw ServerException("The news group does not exist.");
+						throw ServerException("The newsgroup does not exist.");
 					}
 				} catch (const invalid_argument& ia) {
-					throw SyntaxException("Usage: delete group <News Group ID>");
+					throw SyntaxException("Usage: delete group <newsgroup ID>");
 				} catch (const std::out_of_range& oor) {
-					throw SyntaxException("Usage: delete group <News Group ID>");
+					throw SyntaxException("Usage: delete group <newsgroup ID>");
 				}
 			} else {
-				throw SyntaxException("Usage: delete group <News Group ID>");
+				throw SyntaxException("Usage: delete group <newsgroup ID>");
 			}
 		} else if (tokens[1] == "article") {
 			if (tokens.size() == 4) {
 				try {
 					int error = cmdHandler.deleteArticle(stoi(tokens[2]), stoi(tokens[3]));
 					if(error == Protocol::ERR_NG_DOES_NOT_EXIST) {
-						throw ServerException("The news group does not exist.");
+						throw ServerException("The newsgroup does not exist.");
 					} else if (error == Protocol::ERR_ART_DOES_NOT_EXIST) {
 						throw ServerException("The article does not exist.");
 					}
 				} catch (const invalid_argument& ia) {
-					throw SyntaxException("Usage: delete article <News Group ID> <Article ID>");
+					throw SyntaxException("Usage: delete article <newsgroup ID> <article ID>");
 				} catch (const std::out_of_range& oor) {
-					throw SyntaxException("Usage: delete article <News Group ID> <Article ID>");
+					throw SyntaxException("Usage: delete article <newsgroup ID> <article ID>");
 				}
 			} else {
-				throw SyntaxException("Usage: delete article <News Group ID> <Article ID>");
+				throw SyntaxException("Usage: delete article <newsgroup ID> <article ID>");
 			}
 		} else {
-			throw SyntaxException("Usage: delete [group <News Group ID> | article <News Group ID> <Article ID>]");
+			throw SyntaxException("Usage: delete [group <newsgroup ID> | article <newsgroup ID> <article ID>]");
 		}
 	} else {
-		throw SyntaxException("Usage: delete [group <News Group ID> | article <News Group ID> <Article ID>]");
+		throw SyntaxException("Usage: delete [group <newsgroup ID> | article <newsgroup ID> <article ID>]");
 	}
 }
