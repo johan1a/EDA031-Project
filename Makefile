@@ -34,6 +34,9 @@ src/server/news_server_cache_storage: src/server/news_server_cache_storage.o src
 clean:
 	rm -f *.o $(PROGS)
 	rm -f *.d
+	rm news_client
+	rm news_server_cache_storage
+	rm news_server_file_storage
 	
 # Generate dependencies in *.d files
 %.d: %.cc
