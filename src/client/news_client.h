@@ -11,8 +11,16 @@ public:
 	NewsClient(UserInputHandler&);
 	void run();
 private:
-	std::string availableCommands;
 	UserInputHandler handler;
 	std::vector<std::string> executeCommand(std::vector<std::string>);
+	const std::string AVAILABLE_COMMANDS = "Available commands: \n"
+	"list\n"
+	"list <newsgroup ID>\n"
+	"read <newsgroup ID> <article ID>\n"
+	"create group\n"
+	"create article <newsgroup ID>\n"
+	"delete group <newsgroup ID>\n"
+	"delete article <newsgroup ID> <article ID>\n"
+	"exit";
 };
 #endif

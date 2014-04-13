@@ -1,4 +1,5 @@
 make
-mv src/server/news_server_file_storage ./
-mv src/server/news_server_cache_storage ./
-mv src/client/news_client ./
+mkdir bin
+mv src/server/news_server_file_storage ./bin/
+mv src/server/news_server_cache_storage ./bin/
+mv src/client/news_client ./bin/

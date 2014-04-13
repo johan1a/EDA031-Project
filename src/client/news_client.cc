@@ -36,17 +36,7 @@ int main(int argc, char* argv[]) {
 	client.run();
 }
 
-NewsClient::NewsClient(UserInputHandler& h) : handler(h) {
-	availableCommands += "Available commands: \n";
-	availableCommands += "list\n";
-	availableCommands += "list <newsgroup ID>\n";
-	availableCommands += "read <newsgroup ID> <article ID>\n";
-	availableCommands += "create group\n";
-	availableCommands += "create article <newsgroup ID>\n";
-	availableCommands += "delete group <newsgroup ID>\n";
-	availableCommands += "delete article <newsgroup ID> <article ID>\n";
-	availableCommands += "exit";
-}
+NewsClient::NewsClient(UserInputHandler& h) : handler(h) {}
 
 void NewsClient::run(){
 	string input;
@@ -92,7 +82,7 @@ vector<string> NewsClient::executeCommand(vector<string> tokens){
 				handler.del(tokens);
 				output.push_back("The deletion was successful");
 			}else{
-				output.push_back(availableCommands);
+				output.push_back(AVAILABLE_COMMANDS);
 			}
 		} catch(const SyntaxException& se) {
 			output.push_back(se.msg);		
@@ -105,7 +95,7 @@ vector<string> NewsClient::executeCommand(vector<string> tokens){
 			output.push_back(pe.msg);
 		}
 	} else{
-		output.push_back(availableCommands);
+		output.push_back(AVAILABLE_COMMANDS);
 	}
 	return output;
 }
