@@ -38,9 +38,9 @@ clean:
 	rm -f src/common/*.o
 	rm -f src/common/exception/*.o
 	rm -f *.d
-	rm news_client
-	rm news_server_cache_storage
-	rm news_server_file_storage
+	rm bin/news_client
+	rm bin/news_server_cache_storage
+	rm bin/news_server_file_storage
 	
 # Generate dependencies in *.d files
 %.d: %.cc
