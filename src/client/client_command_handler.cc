@@ -6,7 +6,7 @@ ClientCommandHandler::ClientCommandHandler(){}
 
 ClientCommandHandler::ClientCommandHandler(MessageHandler& mh): messageHandler(mh) {}
 
-vector<string> ClientCommandHandler::listGroups() throw ( ConnectionClosedException){
+vector<string> ClientCommandHandler::listGroups() throw (ConnectionClosedException, ProtocolViolationException){
 	messageHandler.sendCode(Protocol::COM_LIST_NG);
 	messageHandler.sendCode(Protocol::COM_END);
 
@@ -25,7 +25,7 @@ vector<string> ClientCommandHandler::listGroups() throw ( ConnectionClosedExcept
 	return groupNames;	
 }
 
-int ClientCommandHandler::createGroup(string title) throw(ConnectionClosedException) {		
+int ClientCommandHandler::createGroup(string title) throw(ConnectionClosedException, ProtocolViolationException) {		
 	messageHandler.sendCode(Protocol::COM_CREATE_NG);
 	messageHandler.sendStringParameter(title);
 	messageHandler.sendCode(Protocol::COM_END);
@@ -47,7 +47,7 @@ int ClientCommandHandler::createGroup(string title) throw(ConnectionClosedExcept
 }
 
 int ClientCommandHandler::deleteGroup(int groupId)  throw (ConnectionClosedException,
-			ProtocolViolationException ){
+			ProtocolViolationException){
 
 	messageHandler.sendCode(Protocol::COM_DELETE_NG);
 	messageHandler.sendIntParameter(groupId);
@@ -69,7 +69,7 @@ int ClientCommandHandler::deleteGroup(int groupId)  throw (ConnectionClosedExcep
 	return errorCode;
 }
 
-vector<string> ClientCommandHandler::listArticles(int groupId) throw (ConnectionClosedException, NewsGroupDoesNotExistException, ArticleDoesNotExistException){
+vector<string> ClientCommandHandler::listArticles(int groupId) throw (ConnectionClosedException, NewsGroupDoesNotExistException, ArticleDoesNotExistException, ProtocolViolationException){
 	messageHandler.sendCode(Protocol::COM_LIST_ART);
 	messageHandler.sendIntParameter(groupId);
 	messageHandler.sendCode(Protocol::COM_END);
@@ -129,7 +129,7 @@ int ClientCommandHandler::createArticle(int groupId, string title, string author
 	return errorCode;
 }
 
-int ClientCommandHandler::deleteArticle(int groupId, int articleId) throw (ConnectionClosedException){
+int ClientCommandHandler::deleteArticle(int groupId, int articleId) throw (ConnectionClosedException, ProtocolViolationException){
 
 		messageHandler.sendCode(Protocol::COM_DELETE_ART);
 		messageHandler.sendIntParameter(groupId);
@@ -152,7 +152,7 @@ int ClientCommandHandler::deleteArticle(int groupId, int articleId) throw (Conne
 		return errorCode;
 }
 
-vector<string> ClientCommandHandler::getArticle(int groupId, int articleId) throw (ConnectionClosedException){
+vector<string> ClientCommandHandler::getArticle(int groupId, int articleId) throw (ConnectionClosedException, NewsGroupDoesNotExistException, ArticleDoesNotExistException, ProtocolViolationException){
 	
 	messageHandler.sendCode(Protocol::COM_GET_ART);
 	messageHandler.sendIntParameter(groupId);
@@ -167,9 +167,13 @@ vector<string> ClientCommandHandler::getArticle(int groupId, int articleId) thro
 	if (code != Protocol::ANS_ACK) {
 		checkCondition(code == Protocol::ANS_NAK, "Create group",
 				"Did not receive ANS_ACK or ANS_NAK");
-		result = vector<string>();
-		result.push_back(to_string(messageHandler.recvCode()));
-
+		code = messageHandler.recvCode();
+		checkCode("Delete article", Protocol::ANS_END, messageHandler.recvCode());
+		if (code == Protocol::ERR_NG_DOES_NOT_EXIST) {
+			throw NewsGroupDoesNotExistException();
+		} else {
+			throw ArticleDoesNotExistException();
+		}
 	} else {
 		result = vector<string>();
 		result.push_back("Title: " + messageHandler.recvStringParameter());

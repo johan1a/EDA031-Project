@@ -16,10 +16,12 @@ class UserInputHandler{
 	public:
 		UserInputHandler();
 		UserInputHandler(ClientCommandHandler&);
-		std::vector<std::string> list(std::vector<std::string>&) throw (ListSyntaxException, NewsGroupDoesNotExistException, ArticleDoesNotExistException );
-		std::vector<std::string> read(std::vector<std::string>&) throw (ArticleDoesNotExistException, ReadSyntaxException);
-		void create(std::vector<std::string>&)  throw (CreateSyntaxException, CreateSyntaxException);
-		void del(std::vector<std::string>&) throw (NewsGroupDoesNotExistException, ArticleDoesNotExistException, DeleteSyntaxException);
+		std::vector<std::string> list(std::vector<std::string>&) throw (ListSyntaxException, NewsGroupDoesNotExistException, ArticleDoesNotExistException, ConnectionClosedException, ProtocolViolationException);
+
+		std::vector<std::string> read(std::vector<std::string>&) throw (ReadSyntaxException, ConnectionClosedException, ProtocolViolationException);
+		void create(std::vector<std::string>&)  throw (CreateSyntaxException, NewsGroupDoesNotExistException, ConnectionClosedException, ProtocolViolationException);
+
+		void del(std::vector<std::string>&) throw (NewsGroupDoesNotExistException, ArticleDoesNotExistException, DeleteSyntaxException, ConnectionClosedException, ProtocolViolationException);
 	private:
 		ClientCommandHandler cmdHandler;
 };

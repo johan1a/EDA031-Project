@@ -12,7 +12,7 @@ UserInputHandler::UserInputHandler() {}
 
 UserInputHandler::UserInputHandler(ClientCommandHandler& cch) : cmdHandler(cch) {}
 
-vector<string> UserInputHandler::list(vector<string>& tokens) throw (ListSyntaxException, NewsGroupDoesNotExistException, ArticleDoesNotExistException ){
+vector<string> UserInputHandler::list(vector<string>& tokens) throw (ListSyntaxException, NewsGroupDoesNotExistException, ArticleDoesNotExistException, ConnectionClosedException, ProtocolViolationException){
 	vector<string> result;
 	if(tokens.size() == 1){
 		result = cmdHandler.listGroups();
@@ -37,7 +37,7 @@ vector<string> UserInputHandler::list(vector<string>& tokens) throw (ListSyntaxE
 	return result;
 }
 
-vector<string> UserInputHandler::read(vector<string>& tokens) throw (ArticleDoesNotExistException, ReadSyntaxException) {
+vector<string> UserInputHandler::read(vector<string>& tokens) throw (ReadSyntaxException, ConnectionClosedException, ProtocolViolationException) {
 	int groupIndex = -1;
 	int articleIndex = -1;
 	if (tokens.size() == 3) {
@@ -53,14 +53,10 @@ vector<string> UserInputHandler::read(vector<string>& tokens) throw (ArticleDoes
 		throw ReadSyntaxException();
 	}
 	vector<string> output = cmdHandler.getArticle(groupIndex,articleIndex);
-	if(output.size() > 0 && output[0] == to_string(Protocol::ERR_ART_DOES_NOT_EXIST)){
-		throw ArticleDoesNotExistException();
-	}
-
 	return output;
 }
 
-void UserInputHandler::create(vector<string>& tokens) throw (CreateSyntaxException, CreateSyntaxException){
+void UserInputHandler::create(vector<string>& tokens) throw (CreateSyntaxException, NewsGroupDoesNotExistException, ConnectionClosedException, ProtocolViolationException){
 	int returnCode = -1;
 
 	if(tokens.size() == 2){
@@ -108,7 +104,7 @@ void UserInputHandler::create(vector<string>& tokens) throw (CreateSyntaxExcepti
 	}
 }
 
-void UserInputHandler::del(vector<string>& tokens) throw (NewsGroupDoesNotExistException, ArticleDoesNotExistException, DeleteSyntaxException){
+void UserInputHandler::del(vector<string>& tokens) throw (NewsGroupDoesNotExistException, ArticleDoesNotExistException, DeleteSyntaxException, ConnectionClosedException, ProtocolViolationException){
 	int errorCode = 0;
 	try {
 		if(tokens.size() == 3 && tokens[1] == "group"){

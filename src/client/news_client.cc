@@ -45,6 +45,7 @@ NewsClient::NewsClient(UserInputHandler& h) : handler(h) {
 	availableCommands += "create article <newsgroup ID>\n";
 	availableCommands += "delete group <newsgroup ID>\n";
 	availableCommands += "delete article <newsgroup ID> <article ID>\n";
+	availableCommands += "exit";
 }
 
 void NewsClient::run(){
@@ -93,12 +94,15 @@ vector<string> NewsClient::executeCommand(vector<string> tokens){
 			}else{
 				output.push_back(availableCommands);
 			}
-		} catch(const SyntaxException& e) {
-			output.push_back(e.msg);		
-		} catch(const NewsGroupDoesNotExistException& e) {
-			output.push_back(e.msg);		
-		} catch(const ArticleDoesNotExistException& e) {
-			output.push_back(e.msg);		
+		} catch(const SyntaxException& se) {
+			output.push_back(se.msg);		
+		} catch(const NewsGroupDoesNotExistException& nge) {
+			output.push_back(nge.msg);		
+		} catch(const ArticleDoesNotExistException& ae) {
+			output.push_back(ae.msg);		
+		} catch(const ProtocolViolationException& pe) {
+			output.push_back("The server didn't follow the protocol");
+			output.push_back(pe.msg);
 		}
 	} else{
 		output.push_back(availableCommands);
