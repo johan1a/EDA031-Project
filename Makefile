@@ -21,6 +21,7 @@ PROGS = src/client/news_client  src/server/news_server_file_storage src/server/n
 
 
 all: $(PROGS)
+	mkdir bin
 	mv src/client/news_client bin/
 	mv src/server/news_server_file_storage bin/
 	mv src/server/news_server_cache_storage bin/
@@ -41,10 +42,10 @@ clean:
 	rm -f src/common/*.o
 	rm -f src/common/exception/*.o
 	rm -f *.d
-	rm bin/news_client
-	rm bin/news_server_cache_storage
-	rm bin/news_server_file_storage
-	rm -r bin/database
+	rm -f bin/news_client
+	rm -f bin/news_server_cache_storage
+	rm -f bin/news_server_file_storage
+	rm -f -r bin
 	
 # Generate dependencies in *.d files
 %.d: %.cc
