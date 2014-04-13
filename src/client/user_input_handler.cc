@@ -37,7 +37,7 @@ vector<string> UserInputHandler::list(vector<string>& tokens) throw (ListSyntaxE
 	return result;
 }
 
-vector<string> UserInputHandler::read(vector<string>& tokens) throw (ArticleDoesNotExistException, ReadSyntaxException, ConnectionClosedException, ProtocolViolationException) {
+vector<string> UserInputHandler::read(vector<string>& tokens) throw (NewsGroupDoesNotExistException, ArticleDoesNotExistException, ReadSyntaxException, ConnectionClosedException, ProtocolViolationException) {
 	int groupIndex = -1;
 	int articleIndex = -1;
 	if (tokens.size() == 3) {
