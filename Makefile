@@ -21,6 +21,9 @@ PROGS = src/client/news_client  src/server/news_server_file_storage src/server/n
 
 
 all: $(PROGS)
+	mv src/client/news_client bin/
+	mv src/server/news_server_file_storage bin/
+	mv src/server/news_server_cache_storage bin/
 
 # Targets rely on implicit rules for compiling and linking
 src/client/news_client: src/client/news_client.o src/client/client_command_handler.o src/common/message_handler.o src/common/connection.o src/client/user_input_handler.o
@@ -41,6 +44,7 @@ clean:
 	rm bin/news_client
 	rm bin/news_server_cache_storage
 	rm bin/news_server_file_storage
+	rm -r bin/database
 	
 # Generate dependencies in *.d files
 %.d: %.cc
