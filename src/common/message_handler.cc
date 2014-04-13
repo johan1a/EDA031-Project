@@ -2,9 +2,9 @@
 #include <string>
 #include "message_handler.h"
 #include "connection.h"
-#include "connection_closed_exception.h"
+#include "exception/connection_closed_exception.h"
 #include "protocol.h"
-#include "protocol_violation_exception.h"
+#include "exception/protocol_violation_exception.h"
 
 using namespace std;
 

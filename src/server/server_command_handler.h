@@ -6,6 +6,7 @@
 
 class ServerCommandHandler {
 public:
+
 	ServerCommandHandler(MessageHandler&, Database&);
 	void newMessage(); //throws ConnectionClosedException, ProtocolViolationException
 private:

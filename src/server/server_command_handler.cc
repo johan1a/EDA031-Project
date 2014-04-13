@@ -10,6 +10,7 @@
 
 using namespace std;
 
+
 ServerCommandHandler::ServerCommandHandler(MessageHandler& msgHandler, Database& database) : msgH(msgHandler), db(database) {}
 
 void ServerCommandHandler::newMessage() {

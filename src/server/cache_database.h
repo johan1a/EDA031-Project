@@ -18,5 +18,4 @@ public:
 private:
 	std::map<int, NewsGroup> database;
 };
-
 #endif

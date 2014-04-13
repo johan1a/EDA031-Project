@@ -24,7 +24,7 @@
 // ------------------------------------------------------------------
 
 #include "connection.h"
-#include "connection_closed_exception.h"
+#include "exception/connection_closed_exception.h"
 
 #include <iostream>
 #include <cstdlib>      /* exit() */

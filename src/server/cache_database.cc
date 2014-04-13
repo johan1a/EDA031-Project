@@ -10,6 +10,7 @@ using namespace std;
 
 CacheDatabase::CacheDatabase(){
 	latestNewsGroupId = 0;	
+	cout << "Database initialized." << endl;
 }
 
 vector<NewsGroup> CacheDatabase::listNewsGroups() const{

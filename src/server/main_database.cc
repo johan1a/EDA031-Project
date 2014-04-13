@@ -10,7 +10,7 @@ using namespace std;
 
 MainDatabase::MainDatabase(){
 	initDatabase();
-	cout << "Database initialized..." << endl;
+	cout << "Database initialized." << endl;
 }
 
 void MainDatabase::createNewsGroup(const string& groupName){
