@@ -92,7 +92,6 @@ vector<string> ClientCommandHandler::listArticles(int groupId) throw (Connection
 	int nbrArticles = messageHandler.recvIntParameter();
 	checkCondition(nbrArticles >= 0, "List articles",
 			"Number of groups < 0");
-	vector<int> articleIds(nbrArticles);
 	vector<string> articleNames(nbrArticles);
 	for (int i = 0; i < nbrArticles; i++) {
 		articleNames[i] = to_string(messageHandler.recvIntParameter()) + ". ";
