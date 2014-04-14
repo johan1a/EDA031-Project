@@ -17,44 +17,51 @@
  */
 class UserInputHandler{
 	public:
-		/* Creates an empty UserInputHandler */
+		/* Creates an empty UserInputHandler 
+		*/
 		UserInputHandler();
 
-		/* Creates an UserInputHandler with a dedicated ClientCommandHandler */
+		/* Creates an UserInputHandler with a dedicated ClientCommandHandler 
+		*/
 		UserInputHandler(ClientCommandHandler&);
 		
 		/* Calls this function if the first token in the user input is "list" 
-			Throws ListSyntaxException if the user input syntax for list is not valid or is out of range 
-			Throws NewsGroupDoesNotExistException if the newsgroup does not exist
-			Throws ArticleDoesNotExistException if an article does not exist
-			Throws ConnectionClosedException if the server closes the connection. 
-	   	    Throws ProtocolViolationException if the communication between the client and the server does not follow the protocol, defined in protocol.h */
+		Throws ListSyntaxException if the user input syntax for list is not valid or is out of range 
+		Throws NewsGroupDoesNotExistException if the newsgroup does not exist
+		Throws ArticleDoesNotExistException if an article does not exist
+		Throws ConnectionClosedException if the server closes the connection. 
+   	    Throws ProtocolViolationException if the communication between the client and the server does not follow the protocol, defined in protocol.h 
+		*/
 		std::vector<std::string> list(std::vector<std::string>&) throw (ListSyntaxException, NewsGroupDoesNotExistException, ArticleDoesNotExistException, ConnectionClosedException, ProtocolViolationException);
 
 		/* Calls this function if the first token in the user input is "read" 
-			Throws NewsGroupDoesNotExistException if the newsgroup does not exist
-			Throws ArticleDoesNotExistException if an article does not exist 
-			Throws ReadSyntaxException if the user input syntax for read is not valid or is out of range
-			Throws ConnectionClosedException if the server closes the connection. 
-	   	    Throws ProtocolViolationException if the communication between the client and the server does not follow the protocol, defined in protocol.h */
+		Throws NewsGroupDoesNotExistException if the newsgroup does not exist
+		Throws ArticleDoesNotExistException if an article does not exist 
+		Throws ReadSyntaxException if the user input syntax for read is not valid or is out of range
+		Throws ConnectionClosedException if the server closes the connection. 
+   	    Throws ProtocolViolationException if the communication between the client and the server does not follow the protocol, defined in protocol.h 
+		*/
 		std::vector<std::string> read(std::vector<std::string>&) throw (NewsGroupDoesNotExistException, ArticleDoesNotExistException, ReadSyntaxException, ConnectionClosedException, ProtocolViolationException);
 		
 		/* Calls this function if the first token in the user input is "create" 
-			Throws CreateSyntaxException if the user input syntax for create is not valid or is out of range
-			Throws NewsGroupDoesNotExistException if the newsgroup does not exist
-			Throws ConnectionClosedException if the server closes the connection. 
-	   	    Throws ProtocolViolationException if the communication between the client and the server does not follow the protocol, defined in protocol.h */
+		Throws CreateSyntaxException if the user input syntax for create is not valid or is out of range
+		Throws NewsGroupDoesNotExistException if the newsgroup does not exist
+		Throws ConnectionClosedException if the server closes the connection. 
+   	    Throws ProtocolViolationException if the communication between the client and the server does not follow the protocol, defined in protocol.h 
+		*/
 		void create(std::vector<std::string>&)  throw (CreateSyntaxException, NewsGroupDoesNotExistException, ConnectionClosedException, ProtocolViolationException);
 
 		/* Calls this function if the first token in the user input is "delete" 
-			Throws NewsGroupDoesNotExistException if the newsgroup does not exist
-			Throws ArticleDoesNotExistException if an article does not exist 
-			Throws DeleteSyntaxException if the user input syntax for delete is not valid or is out of range
-			Throws ConnectionClosedException if the server closes the connection. 
-	   	    Throws ProtocolViolationException if the communication between the client and the server does not follow the protocol, defined in protocol.h */	
+		Throws NewsGroupDoesNotExistException if the newsgroup does not exist
+		Throws ArticleDoesNotExistException if an article does not exist 
+		Throws DeleteSyntaxException if the user input syntax for delete is not valid or is out of range
+		Throws ConnectionClosedException if the server closes the connection. 
+   	    Throws ProtocolViolationException if the communication between the client and the server does not follow the protocol, defined in protocol.h 
+		*/	
 		void del(std::vector<std::string>&) throw (NewsGroupDoesNotExistException, ArticleDoesNotExistException, DeleteSyntaxException, ConnectionClosedException, ProtocolViolationException);
 	private:
-		/* The client command handler that handles the commands from the user more precisely */
+		/* The client command handler that handles the commands from the user more precisely 
+		*/
 		ClientCommandHandler cmdHandler;
 };
 
