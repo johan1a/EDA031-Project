@@ -11,13 +11,13 @@
 class MainDatabase : public Database {
 public:
 	MainDatabase();
-	void createNewsGroup(const std::string& groupName) override;
-	void deleteArticle(int groupID, int articleID) override;
-	void deleteNewsGroup(int groupID) override;
-	std::vector<Article> listArticlesFor(int groupID) const override;
+	void createNewsGroup(const std::string& groupName) throw (NewsGroupAlreadyExistsException) override;
+	void deleteArticle(int groupID, int articleID) throw (ArticleDoesNotExistException, NewsGroupDoesNotExistException) override;
+	void deleteNewsGroup(int groupID) throw (NewsGroupDoesNotExistException) override;
+	std::vector<Article> listArticlesFor(int groupID) const throw (ArticleDoesNotExistException, NewsGroupDoesNotExistException) override;
 	std::vector<NewsGroup> listNewsGroups() const override;
-	Article readArticle(int groupID, int articleID) const override;
-	void writeArticle(int groupID, Article&) override;
+	Article readArticle(int groupID, int articleID)  const throw (ArticleDoesNotExistException, NewsGroupDoesNotExistException) override;
+	void writeArticle(int groupID, Article&) throw (NewsGroupDoesNotExistException) override;
 private:
 	/* Path to the database root folder. */ 
 	const std::string databaseRootPath = "./database/";
@@ -54,7 +54,7 @@ private:
 
 	/* Creates an empty Article object with the given IDs. 
 		Used for listing of articles. */
-	Article makeArticle(int groupID, int articleID) const;
+	Article makeArticle(int groupID, int articleID) const throw (ArticleDoesNotExistException, NewsGroupDoesNotExistException);
 
 	/* Creates an empty NewsGroup object with the given ID.
 		Used for listing of news groups. */

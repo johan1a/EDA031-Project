@@ -1,7 +1,3 @@
-
-#include "../common/exception/news_group_already_exists_exception.h"
-#include "../common/exception/news_group_does_not_exist_exception.h"
-#include "../common/exception/article_does_not_exist_exception.h"
 #include "main_database.h"
 #include <iostream>
 #include <fstream>
@@ -15,7 +11,7 @@ MainDatabase::MainDatabase(){
 	cout << "Database initialized." << endl;
 }
 
-void MainDatabase::createNewsGroup(const string& groupName){
+void MainDatabase::createNewsGroup(const string& groupName) throw (NewsGroupAlreadyExistsException){
 	if(!groupExists(groupName)){
 		string groupPath = databaseRootPath + to_string(++latestNewsGroupID);
 		mkdir(groupPath.c_str(), S_IRWXU | S_IROTH);
@@ -28,7 +24,7 @@ void MainDatabase::createNewsGroup(const string& groupName){
 	}
 }
 
-void MainDatabase::deleteArticle(int groupID, int articleID){
+void MainDatabase::deleteArticle(int groupID, int articleID) throw (ArticleDoesNotExistException, NewsGroupDoesNotExistException){
 	if(groupExists(groupID)){
 		string articlePath = databaseRootPath + to_string(groupID) + "/" + to_string(articleID);
 		if(remove(articlePath.c_str()) != 0){
@@ -39,7 +35,7 @@ void MainDatabase::deleteArticle(int groupID, int articleID){
 	}
 }
 
-void MainDatabase::deleteNewsGroup(int groupID){
+void MainDatabase::deleteNewsGroup(int groupID) throw (NewsGroupDoesNotExistException){
 	string groupPath = databaseRootPath + to_string(groupID);
 	DIR *groupDir = opendir(groupPath.c_str());
 	if(groupDir != nullptr){
@@ -59,7 +55,7 @@ void MainDatabase::deleteNewsGroup(int groupID){
 	}
 }
 
-vector<Article> MainDatabase::listArticlesFor(int groupID) const{
+vector<Article> MainDatabase::listArticlesFor(int groupID) const throw (ArticleDoesNotExistException, NewsGroupDoesNotExistException){
 	vector<Article> articles;
 	DIR *groupDir = openGroupDir(groupID);
 	if(groupDir != nullptr){
@@ -86,7 +82,6 @@ vector<NewsGroup> MainDatabase::listNewsGroups() const{
 		struct dirent *group = nullptr;
 		while ((group = readdir (databaseDir)) != nullptr){
 			string groupID(group->d_name);
-			cout << groupID  << endl;
 			if(groupID != "." && groupID != ".." && groupID != LAST_GROUP_ID){
 				groups.push_back(makeGroup(stoi(groupID)));
 			}
@@ -98,11 +93,11 @@ vector<NewsGroup> MainDatabase::listNewsGroups() const{
 	return groups;
 }
 
-Article MainDatabase::readArticle(int groupID, int articleID) const{
+Article MainDatabase::readArticle(int groupID, int articleID) const throw (ArticleDoesNotExistException, NewsGroupDoesNotExistException){
 	return makeArticle(groupID, articleID);
 }
 
-void MainDatabase::writeArticle(int groupID, Article& article) {
+void MainDatabase::writeArticle(int groupID, Article& article) throw (NewsGroupDoesNotExistException){
 		if(!groupExists(groupID)){
 			throw NewsGroupDoesNotExistException();
 		}
@@ -182,7 +177,7 @@ int MainDatabase::loadLastArticleID(int groupID) const{
 	return stoi(id);
 }
 
-Article MainDatabase::makeArticle(int groupID, int articleID) const{
+Article MainDatabase::makeArticle(int groupID, int articleID) const throw (ArticleDoesNotExistException, NewsGroupDoesNotExistException) {
 	if(groupExists(groupID)){
 		ifstream articleStream(databaseRootPath + to_string(groupID) + "/" + to_string(articleID));
 		if(articleStream){

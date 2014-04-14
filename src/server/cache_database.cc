@@ -13,15 +13,7 @@ CacheDatabase::CacheDatabase(){
 	cout << "Database initialized." << endl;
 }
 
-vector<NewsGroup> CacheDatabase::listNewsGroups() const{
-	vector<NewsGroup> v;
-	for(auto it = database.begin(); it != database.end(); ++it){
-		v.push_back(it->second);
-	}
-	return v;
-}
-
-void CacheDatabase::createNewsGroup(const string& ngName){
+void CacheDatabase::createNewsGroup(const string& ngName) throw (NewsGroupAlreadyExistsException){
 	NewsGroup ng(ngName);
 	ng.id = ++latestNewsGroupID;
 	auto iter = find_if(database.begin(), database.end(), 
@@ -32,48 +24,7 @@ void CacheDatabase::createNewsGroup(const string& ngName){
 	database.insert(make_pair(latestNewsGroupID, ng));
 }
 
-void CacheDatabase::deleteNewsGroup(int id){
-	size_t i = database.erase(id);
-	if(!i){
-		throw NewsGroupDoesNotExistException();
-	}
-}
-
-vector<Article> CacheDatabase::listArticlesFor(int id) const{
-	auto it = database.find(id);
-	if(it == database.end()){
-		throw NewsGroupDoesNotExistException();
-	} else {
-		return it->second.articles;
-	}
-}
-
-Article CacheDatabase::readArticle(int ngId, int artId) const{
-	auto it = database.find(ngId);
-	if(it == database.end()){
-		throw NewsGroupDoesNotExistException();
-	} else {
-		auto iter = find_if(it->second.articles.begin(), it->second.articles.end(), 
-													[artId](Article a){ return artId == a.id; });
-		if(iter == it->second.articles.end()){
-			throw ArticleDoesNotExistException();
-		} else {
-			return *iter;
-		}
-	}
-}
-
-void CacheDatabase::writeArticle(int id, Article& art){
-	auto it = database.find(id);
-	if(it == database.end()){
-		throw NewsGroupDoesNotExistException();
-	} else {
-		art.id = ++(it->second.latestArticleId);
-		it->second.articles.push_back(art);
-	}
-}
-
-void CacheDatabase::deleteArticle(int ngId, int artId){
+void CacheDatabase::deleteArticle(int ngId, int artId) throw (ArticleDoesNotExistException, NewsGroupDoesNotExistException){
 	auto it = database.find(ngId);
 	if(it == database.end()){
 		throw NewsGroupDoesNotExistException();
@@ -88,6 +39,51 @@ void CacheDatabase::deleteArticle(int ngId, int artId){
 	}
 }
 
+void CacheDatabase::deleteNewsGroup(int id) throw (NewsGroupDoesNotExistException){
+	size_t i = database.erase(id);
+	if(!i){
+		throw NewsGroupDoesNotExistException();
+	}
+}
 
+vector<Article> CacheDatabase::listArticlesFor(int id) const throw (NewsGroupDoesNotExistException){
+	auto it = database.find(id);
+	if(it == database.end()){
+		throw NewsGroupDoesNotExistException();
+	} else {
+		return it->second.articles;
+	}
+}
 
+vector<NewsGroup> CacheDatabase::listNewsGroups() const{
+	vector<NewsGroup> v;
+	for(auto it = database.begin(); it != database.end(); ++it){
+		v.push_back(it->second);
+	}
+	return v;
+}
 
+Article CacheDatabase::readArticle(int ngId, int artId) const throw (ArticleDoesNotExistException, NewsGroupDoesNotExistException){
+	auto it = database.find(ngId);
+	if(it == database.end()){
+		throw NewsGroupDoesNotExistException();
+	} else {
+		auto iter = find_if(it->second.articles.begin(), it->second.articles.end(), 
+													[artId](Article a){ return artId == a.id; });
+		if(iter == it->second.articles.end()){
+			throw ArticleDoesNotExistException();
+		} else {
+			return *iter;
+		}
+	}
+}
+
+void CacheDatabase::writeArticle(int id, Article& art) throw (NewsGroupDoesNotExistException){
+	auto it = database.find(id);
+	if(it == database.end()){
+		throw NewsGroupDoesNotExistException();
+	} else {
+		art.id = ++(it->second.latestArticleId);
+		it->second.articles.push_back(art);
+	}
+}
