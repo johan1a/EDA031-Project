@@ -9,7 +9,7 @@
 using namespace std;
 
 CacheDatabase::CacheDatabase(){
-	latestNewsGroupId = 0;	
+	latestNewsGroupID = 0;	
 	cout << "Database initialized." << endl;
 }
 
@@ -23,13 +23,13 @@ vector<NewsGroup> CacheDatabase::listNewsGroups() const{
 
 void CacheDatabase::createNewsGroup(const string& ngName){
 	NewsGroup ng(ngName);
-	ng.id = ++latestNewsGroupId;
+	ng.id = ++latestNewsGroupID;
 	auto iter = find_if(database.begin(), database.end(), 
 												[ngName](pair<int, NewsGroup> p){ return p.second.name == ngName; });
 	if(iter != database.end()){
 		throw NewsGroupAlreadyExistsException();
 	}
-	database.insert(make_pair(latestNewsGroupId, ng));
+	database.insert(make_pair(latestNewsGroupID, ng));
 }
 
 void CacheDatabase::deleteNewsGroup(int id){

@@ -1,3 +1,4 @@
+
 #include "../common/exception/news_group_already_exists_exception.h"
 #include "../common/exception/news_group_does_not_exist_exception.h"
 #include "../common/exception/article_does_not_exist_exception.h"
@@ -9,19 +10,19 @@
 using namespace std;
 
 MainDatabase::MainDatabase(){
+	latestNewsGroupID = 0;
 	initDatabase();
 	cout << "Database initialized." << endl;
 }
 
 void MainDatabase::createNewsGroup(const string& groupName){
 	if(!groupExists(groupName)){
-		string groupPath = databaseRootPath + to_string(freeGroupID);
+		string groupPath = databaseRootPath + to_string(++latestNewsGroupID);
 		mkdir(groupPath.c_str(), S_IRWXU | S_IROTH);
 		ofstream nameFile(groupPath + "/" + GROUP_NAME_FILE);
 		nameFile << groupName;
 		nameFile.close();
-		freeGroupID++;
-		saveFreeIDS();
+		saveLastGroupID();
 	}else{
 		throw NewsGroupAlreadyExistsException();
 	}
@@ -65,7 +66,7 @@ vector<Article> MainDatabase::listArticlesFor(int groupID) const{
 		struct dirent *dirEnt;
 		while ((dirEnt = readdir (groupDir))){
 			string entryName(dirEnt->d_name);
-			if(entryName != "." && entryName != ".." && entryName != GROUP_NAME_FILE){
+			if(entryName != "." && entryName != ".." && entryName != GROUP_NAME_FILE && entryName != LAST_ARTICLE_ID){
 				articles.push_back(makeArticle(groupID, stoi(entryName)));
 			}
 		}
@@ -85,7 +86,8 @@ vector<NewsGroup> MainDatabase::listNewsGroups() const{
 		struct dirent *group = nullptr;
 		while ((group = readdir (databaseDir)) != nullptr){
 			string groupID(group->d_name);
-			if(groupID != "." && groupID != ".." && groupID != IDFILE){
+			cout << groupID  << endl;
+			if(groupID != "." && groupID != ".." && groupID != LAST_GROUP_ID){
 				groups.push_back(makeGroup(stoi(groupID)));
 			}
 		}
@@ -105,10 +107,11 @@ void MainDatabase::writeArticle(int groupID, Article& article) {
 			throw NewsGroupDoesNotExistException();
 		}
 		string groupPath = databaseRootPath + to_string(groupID) + "/";
-		string articlePath = groupPath + to_string(freeArticleID);
+		int artID = loadLastArticleID(groupID) + 1;
+		string articlePath = groupPath + to_string(artID);
 		saveArticleToFile(article, articlePath);
-		++freeArticleID;
-		saveFreeIDS();
+		saveLastArticleID(groupID, artID);
+		saveLastGroupID();
 }
 
 string MainDatabase::getGroupName(int groupID) const{
@@ -129,7 +132,7 @@ bool MainDatabase::groupExists(const string& groupName) const{
 	struct dirent* group;
 	while((group = readdir(root))){
 		string groupID(group->d_name);
-		if(groupID != ".." && groupID != "." && groupID != IDFILE){
+		if(groupID != ".." && groupID != "." && groupID != LAST_GROUP_ID){
 			string otherGroupName = getGroupName(stoi(groupID));
 			if(otherGroupName == groupName){
 				closedir(root);
@@ -146,33 +149,37 @@ void MainDatabase::initDatabase(){
 	if (!opendir(databaseRootPath.c_str())){
 		cout << "Creating root directory..." << endl;
 		mkdir(databaseRootPath.c_str(), S_IRWXU | S_IROTH );
-		freeArticleID = 0;
-		freeGroupID = 0;
-		saveFreeIDS();
+		latestNewsGroupID = 0;
+		saveLastGroupID();
 	}else{
-		loadFreeIDS();
+		loadLastGroupID();
 	}
 }
 
-void MainDatabase::loadFreeIDS(){
-	ifstream idStream(IDPATH);
+void MainDatabase::loadLastGroupID(){
+	ifstream idStream(GROUP_ID_PATH);
 	if(idStream){
 		string id;
-		getline(idStream, id);
-		freeArticleID = stoi(id);
-
-		getline(idStream, id);
-		freeGroupID = stoi(id);
-
+		idStream >> id;
+		latestNewsGroupID = stoi(id);
 		idStream.close();
 	}
 }
 
-void MainDatabase::saveFreeIDS(){
-		ofstream idFile(IDPATH);
-		idFile << freeArticleID << endl;
-		idFile << freeGroupID << endl;
-		idFile.close();	
+int MainDatabase::loadLastArticleID(int groupID) const{
+	string idPath = databaseRootPath + to_string(groupID) + "/" + LAST_ARTICLE_ID;
+	ifstream idStream(idPath);
+	
+	string id = "0";
+	if(idStream){
+		idStream >> id;
+		idStream.close();
+	}else{
+		ofstream outStream(idPath);
+		outStream << id;
+		outStream.close();
+	}
+	return stoi(id);
 }
 
 Article MainDatabase::makeArticle(int groupID, int articleID) const{
@@ -219,4 +226,17 @@ void MainDatabase::saveArticleToFile(Article& article, string& articlePath) cons
 	nameFile << article.author << endl;
 	nameFile << article.text;
 	nameFile.close();
+}
+
+void MainDatabase::saveLastArticleID(int groupID, int articleID){
+	string idPath = databaseRootPath + to_string(groupID) + "/" + LAST_ARTICLE_ID;
+	ofstream idStream(idPath);
+	idStream << articleID;
+	idStream.close();
+}
+
+void MainDatabase::saveLastGroupID(){
+		ofstream idFile(GROUP_ID_PATH);
+		idFile << latestNewsGroupID << endl;
+		idFile.close();	
 }
