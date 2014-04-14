@@ -22,42 +22,42 @@ public:
 	/* Creates a ClientCommandHandler with a dedicated MessageHandler */
 	ClientCommandHandler(MessageHandler& mh);
 
-	/* Lists all the news groups. 
+	/* Lists all the newsgroups. 
 	    Throws ConnectionClosedException if the server closes the connection. 
 	    Throws ProtocolViolationException if the communication between the client and the server does not follow protocol, defined in protocol.h */
 	std::vector<std::string> listGroups() throw(ConnectionClosedException, ProtocolViolationException);
 
-	/* Creates a news group with the title 'title'. 
+	/* Creates a newsgroup with the title 'title'. 
 	    Throws ConnectionClosedException if the server closes the connection. 
 	    Throws ProtocolViolationException if the communication between the client and the server does not follow the protocol, defined in protocol.h */
 	int createGroup(std::string title) throw(ConnectionClosedException, ProtocolViolationException);
 
-	/* Deletes the news group with group ID 'groupIndex'. 
+	/* Deletes the newsgroup with group ID 'groupIndex'. 
 	    Throws ConnectionClosedException if the server closes the connection. 
 	    Throws ProtocolViolationException if the communication between the client and the server does not follow the protocol, defined in protocol.h */
 	int deleteGroup(int groupIndex) throw (ConnectionClosedException, ProtocolViolationException);
 
-	/* Lists all the articles in the news group with the group ID 'groupIndex'. 
+	/* Lists all the articles in the newsgroup with the group ID 'groupIndex'. 
 	    Throws ConnectionClosedException if the server closes the connection. 
-	    Throws NewsGroupDoesNotExistexception if the news group ID number input by the the user does not exist.
-	    Throws ArticleDoesNotExistexception if the news group is empty.
+	    Throws NewsGroupDoesNotExistexception if the newsgroup ID number input by the the user does not exist.
+	    Throws ArticleDoesNotExistexception if the newsgroup is empty.
 	    Throws ProtocolViolationException if the communication between the client and the server does not follow the protocol, defined in protocol.h */
 	std::vector<std::string> listArticles(int groupIndex) throw (ConnectionClosedException, NewsGroupDoesNotExistException, ArticleDoesNotExistException, ProtocolViolationException);
 
-	/* Creates an article with the title 'title', author 'author', and text 'text' in the news group with the group ID groupIndex. 
+	/* Creates an article with the title 'title', author 'author', and text 'text' in the newsgroup with the group ID groupIndex. 
 	    Throws ConnectionClosedException if the server closes the connection. 
 	    Throws ProtocolViolationException if the communication between the client and the server does not follow the protocol, defined in protocol.h */
 	int createArticle(int groupIndex, std::string title, std::string author, std::string text) throw (ConnectionClosedException, ProtocolViolationException);
 
-	/* Deletes an article with the the article ID 'articleIndex', in a news group with the group ID 'groupIndex'
+	/* Deletes an article with the the article ID 'articleIndex', in a newsgroup with the group ID 'groupIndex'
 	    Throws ConnectionClosedException if the server closes the connection. 
 	    Throws ProtocolViolationException if the communication between the client and the server does not follow the protocol, defined in protocol.h */
 	int deleteArticle(int groupIndex, int articleIndex) throw (ConnectionClosedException, ProtocolViolationException);
 
-	/* Retrieves an article with the article ID 'articleIndex' from the news group with the group ID 'groupIndex'
+	/* Retrieves an article with the article ID 'articleIndex' from the newsgroup with the group ID 'groupIndex'
 	    Throws ConnectionClosedException if the server closes the connection. 
-	    Throws NewsGroupDoesNotExistexception if the news group ID number input by the the user does not exist.
-	    Throws ArticleDoesNotExistexception if the article ID does not exist in the news group with the corresponding group ID.
+	    Throws NewsGroupDoesNotExistexception if the newsgroup ID number input by the the user does not exist.
+	    Throws ArticleDoesNotExistexception if the article ID does not exist in the newsgroup with the corresponding group ID.
 	    Throws ProtocolViolationException if the communication between the client and the server does not follow the protocol, defined in protocol.h */
 	std::vector<std::string> getArticle(int groupIndex, int articleIndex) throw (ConnectionClosedException, NewsGroupDoesNotExistException, ArticleDoesNotExistException, ProtocolViolationException);
 

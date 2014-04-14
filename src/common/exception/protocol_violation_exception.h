@@ -1,3 +1,14 @@
+// ------------------------------------------------------------------
+//
+// 		  		ProtocolViolationException header file
+//
+// A ProtocolViolationException is thrown if the communication 
+// between the client and the server does not follow the protocol, 
+// defined in protocol.h
+//
+//
+// ------------------------------------------------------------------
+
 #include <string>
 
 #ifndef PROTOCOL_VIOLATION_EXCEPTION_H
