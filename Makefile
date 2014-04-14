@@ -19,9 +19,7 @@ LDFLAGS =   -g
 # Targets
 PROGS = src/client/news_client  src/server/news_server_file_storage src/server/news_server_cache_storage
 
-
 all: $(PROGS)
-	mkdir bin
 	mv src/client/news_client bin/
 	mv src/server/news_server_file_storage bin/
 	mv src/server/news_server_cache_storage bin/
@@ -45,7 +43,6 @@ clean:
 	rm -f bin/news_client
 	rm -f bin/news_server_cache_storage
 	rm -f bin/news_server_file_storage
-	rm -f -r bin
 	
 # Generate dependencies in *.d files
 %.d: %.cc
